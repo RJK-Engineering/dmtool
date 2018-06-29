@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <ImportDeployDataSet>
+    <Environment>environment_name</Environment>
+    <DeployDataSet>deploy_dataset_name</DeployDataSet>
+    <OptionSetPath>option_set_file</OptionSetPath>
+  </ImportDeployDataSet>
+</DeploymentOperation>

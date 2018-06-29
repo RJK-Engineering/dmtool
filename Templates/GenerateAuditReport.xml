@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <GenerateAuditReport>
+    <AuditFile>audit_file_path</AuditFile>
+    <AuditReport detailed="value"> audit_report_path</AuditReport>
+  </GenerateAuditReport>
+</DeploymentOperation>

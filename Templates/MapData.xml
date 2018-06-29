@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <MapData type="type">
+    <Pair>pair_name</Pair>
+  </MapData>
+</DeploymentOperation>

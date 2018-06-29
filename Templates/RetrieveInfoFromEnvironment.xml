@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <RetrieveInfoFromEnvironment mode="value" type="Service">
+    <SourceEnvironment>source_environment_name</SourceEnvironment>
+    <DestinationEnvironment>destination_environment_name</DestinationEnvironment>
+  </RetrieveInfoFromEnvironment>
+</DeploymentOperation>

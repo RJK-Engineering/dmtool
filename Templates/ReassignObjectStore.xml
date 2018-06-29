@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <ReassignObjectStore>
+    <SourceEnvironment>
+      <Name>environment_name</Name>
+    </SourceEnvironment>
+    <DestinationEnvironment>
+      <Name>environment_name</Name>
+    </DestinationEnvironment>
+    <SourceObjectStores>
+      <ObjectStore>object_store_name_1</ObjectStore>
+      <ObjectStore>object_store_name_2</ObjectStore>
+    </SourceObjectStores>
+  </ReassignObjectStore>
+</DeploymentOperation>

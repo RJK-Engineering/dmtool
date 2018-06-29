@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <AnalyzeDeployDataSet analysisFailuresLimit="number" deleteAnalysisResultsFileOnError="value" importUpdateOption="option_value">
+    <Pair>pair_name</Pair>
+    <DeployDataSet>deploy_dataset_name</DeployDataSet>
+    <ValidationOutput generateDetailedReport="value">
+      <AnalysisReportFileName>analysis_report_filename</AnalysisReportFileName>
+    </ValidationOutput>
+  </AnalyzeDeployDataSet>
+</DeploymentOperation>

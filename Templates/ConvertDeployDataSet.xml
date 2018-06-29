@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <ConvertDeployDataSet deleteDestinationFilesOnError="value">
+    <Pair>pair_name</Pair>
+    <SourceDeployDataSet>source_deploy_dataSet_path</SourceDeployDataSet>
+    <ConvertedDeployDataSet>converted_deploy_dataSet_path</ConvertedDeployDataSet>
+  </ConvertDeployDataSet>
+</DeploymentOperation>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <ExpandDeployPackage createEnvironment="value" halfMapMode="mode_value">
+    <Environment>environment_name</Environment>
+    <DeployDataSet>deploy_dataset_name</DeployDataSet>
+    <DeployPackage>deploy_zip_name</DeployPackage>
+  </ExpandDeployPackage>
+</DeploymentOperation>

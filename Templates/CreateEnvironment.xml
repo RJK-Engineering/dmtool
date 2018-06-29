@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <CreateEnvironment storePassword="value" testConnection="value">
+    <Name>environment_name</Name>
+    <Connection>
+      <Type>connection_type</Type>
+      <ApplicationServer>application_server_name</ApplicationServer>
+      <Server>server_name</Server>
+      <Port>port_number</Port>
+      <Path>path_name</Path>
+      <UserName>user_name</UserName>
+    </Connection>
+  </CreateEnvironment>
+</DeploymentOperation>

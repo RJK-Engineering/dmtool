@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
+  <RetrievePrincipalInfoFromDomain mode="mode_type">
+    <Environment>environment_name</Environment>
+    <LDAPDataSource>
+      <Filter type="filter_value"/>
+      <Realms>
+        <Realm>dc=realm_name,dc=realm_name,dc=realm_name</Realm>
+      </Realms>
+    </LDAPDataSource>
+  </RetrievePrincipalInfoFromDomain>
+</DeploymentOperation>
