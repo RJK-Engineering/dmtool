@@ -47,6 +47,10 @@ param (
     [string]$SourceEnvironment = $null,
     # Source-destination pair name.
     [string]$Pair = $null,
+    # Source environment password.
+    [switch]$SourcePassword = $false,
+    # Destination environment password.
+    [switch]$DestinationPassword = $false,
 
     # Path to deployment manager executable.
     # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager.exe
@@ -83,7 +87,14 @@ param (
 
 if ($Build) {
 } elseif ($Deploy) {
-    "deploy"
+    "Performing ExpandDeployPackage ..."
+    & $DeploymentManager -o "$xmlDir\$ExpandDeployPackageXML"
+    "Performing ConvertDeployDataSet ..."
+    & $DeploymentManager -o "$xmlDir\$ConvertDeployDataSetXML"
+    "Performing AnalyzeDeployDataSet ..."
+    & $DeploymentManager -o "$xmlDir\$AnalyzeDeployDataSetXML" -p $DestinationPassword
+    "Performing ImportDeployDataSet ..."
+    & $DeploymentManager -o "$xmlDir\$ImportDeployDataSetXML" -p $SourcePassword
     exit
 } else {
     Get-Help .\dmtool.ps1
