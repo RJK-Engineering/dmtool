@@ -97,7 +97,7 @@ if ($Build) {
     & $DeploymentManager -o "$xmlDir\$ImportDeployDataSetXML" -p $SourcePassword
     exit
 } else {
-    Get-Help .\dmtool.ps1
+    & Get-Help $PSCommandPath
     exit
 }
 
