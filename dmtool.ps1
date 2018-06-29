@@ -118,7 +118,7 @@ function ExpandDeployPackage( [string]$packagePath ) {
     $el.halfMapMode = $halfMapMode
 
     $el.Environment = $SourceEnvironment
-    $el.DeployDataSet = $deployDataSet
+    $el.DeployDataSet = $DeployDataSet
     $el.DeployPackage = $packagePath
 
     WriteXML $xml $ExpandDeployPackageXML
@@ -133,8 +133,8 @@ function ConvertDeployDataSet {
     $el.deleteDestinationFilesOnError = $deleteDestinationFilesOnError
 
     $el.Pair = $Pair
-    $el.SourceDeployDataSet = $deployDataSet
-    $el.ConvertedDeployDataSet = $convertedDeployDataSet
+    $el.SourceDeployDataSet = $DeployDataSet
+    $el.ConvertedDeployDataSet = $ConvertedDeployDataSet
 
     WriteXML $xml $ConvertDeployDataSetXML
 }
@@ -152,11 +152,11 @@ function AnalyzeDeployDataSet {
     $el.deleteAnalysisResultsFileOnError = $deleteAnalysisResultsFileOnError
     $el.importUpdateOption = $importUpdateOption
     $el.Pair = $Pair
-    $el.DeployDataSet = $convertedDeployDataSet
+    $el.DeployDataSet = $ConvertedDeployDataSet
 
     $el = $el.ValidationOutput
     $el.generateDetailedReport = $generateDetailedReport
-    $el.AnalysisReportFileName = "$convertedDeployDataSet\$AnalysisReportFileName"
+    $el.AnalysisReportFileName = "$ConvertedDeployDataSet\$AnalysisReportFileName"
 
     WriteXML $xml $AnalyzeDeployDataSetXML
 }
@@ -166,7 +166,7 @@ function ImportDeployDataSet {
 
     $el = $xml.DeploymentOperation.ImportDeployDataSet
     $el.Environment = $SourceEnvironment
-    $el.DeployDataSet = $convertedDeployDataSet
+    $el.DeployDataSet = $ConvertedDeployDataSet
     $el.OptionSetPath = $OptionSet
 
     WriteXML $xml $ImportDeployDataSetXML
@@ -184,13 +184,12 @@ function ImportDeployDataSet {
 "Source-destination pair: $Pair"; ""
 
 function ProcessPackage($pkg) {
-    $packageFile = $pkg.Name
-    "Processing $packageFile ..."
+    "Processing $pkg ..."
     $packageName = $pkg.BaseName
-    $deployDataSet = "$DataSetDir\$packageName"
-    "Deploy data set: $deployDataSet"
-    $convertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
-    "convertedDeployDataSet: $convertedDeployDataSet"
+    $DeployDataSet = "$DataSetDir\$packageName"
+    "Deploy data set: $DeployDataSet"
+    $ConvertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
+    "Converted ddset: $ConvertedDeployDataSet"
 
     $xmlDir = "$PackageDir\$packageName"
     if (-not (Test-Path $xmlDir)) {
