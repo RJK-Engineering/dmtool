@@ -63,6 +63,8 @@ param (
     # Default value: 5.2.1
     [string]$OptionSetVersion = "5.2.1",
 
+    # Name of file created by AnalyzeDeployDataSet operation.
+    # File will be stored in converted deploy data set directory.
     [string]$AnalysisReportFileName = "ChangeImpactReport.xml",
 
     # Name of ExpandDeployPackage deployment operation file
@@ -90,7 +92,7 @@ if ($Build) {
 
 ###########################################################
 
-function GetXML ( [string]$file ) {
+function GetXML( [string]$file ) {
     Write-Host "Generating $file ..."
     [xml]$xml = Get-Content -Path "$TemplateDir\$file"
     $el = $xml.DeploymentOperation
@@ -105,42 +107,33 @@ function WriteXML( [xml]$xml, [string]$file ) {
     "Written $out"
 }
 
-function ExpandDeployPackage {
+function ExpandDeployPackage( [string]$packagePath ) {
+    $xml = GetXML $ExpandDeployPackageXML
+
     $createEnvironment="false"
     $halfMapMode="merge"
-
-    # $packageName = $packageFile -replace '\.\w+$', '' # filename without extension
-    # $DeployDataSet = "$DataSetDir\$packageName"
-    $DeployPackage="$PackageDir\$packageFile"
-    # "DeployPackage: $DeployPackage"
-
-    $xml = GetXML $ExpandDeployPackageXML
 
     $el = $xml.DeploymentOperation.ExpandDeployPackage
     $el.createEnvironment = $createEnvironment
     $el.halfMapMode = $halfMapMode
 
     $el.Environment = $SourceEnvironment
-    $el.DeployDataSet = $DeployDataSet
-    $el.DeployPackage = $DeployPackage
+    $el.DeployDataSet = $deployDataSet
+    $el.DeployPackage = $packagePath
 
     WriteXML $xml $ExpandDeployPackageXML
 }
 
 function ConvertDeployDataSet {
-    $deleteDestinationFilesOnError="false"
-
-    # $SourceDeployDataSet=$DeployDataSet
-    # $convertedDeployDataSet="$ConvertedDataSetDir\$packageName.converted"
-    # "convertedDeployDataSet: $convertedDeployDataSet"
-
     $xml = GetXML $ConvertDeployDataSetXML
+
+    $deleteDestinationFilesOnError="false"
 
     $el = $xml.DeploymentOperation.ConvertDeployDataSet
     $el.deleteDestinationFilesOnError = $deleteDestinationFilesOnError
 
     $el.Pair = $Pair
-    $el.SourceDeployDataSet = $SourceDeployDataSet
+    $el.SourceDeployDataSet = $deployDataSet
     $el.ConvertedDeployDataSet = $convertedDeployDataSet
 
     WriteXML $xml $ConvertDeployDataSetXML
@@ -154,14 +147,12 @@ function AnalyzeDeployDataSet {
     $importUpdateOption="UpdateAlways" # options: UpdateIfNewer UpdateAlways UpdateNotAllowed
     $generateDetailedReport="true"
 
-    $DeployDataSet=$convertedDeployDataSet
-
     $el = $xml.DeploymentOperation.AnalyzeDeployDataSet
     $el.analysisFailuresLimit = $analysisFailuresLimit
     $el.deleteAnalysisResultsFileOnError = $deleteAnalysisResultsFileOnError
     $el.importUpdateOption = $importUpdateOption
     $el.Pair = $Pair
-    $el.DeployDataSet = $DeployDataSet
+    $el.DeployDataSet = $convertedDeployDataSet
 
     $el = $el.ValidationOutput
     $el.generateDetailedReport = $generateDetailedReport
@@ -171,9 +162,6 @@ function AnalyzeDeployDataSet {
 }
 
 function ImportDeployDataSet {
-    # $DeployDataSet="deploy_dataset_name"
-    # $OptionSet="option_set_file"
-
     $xml = GetXML $ImportDeployDataSetXML
 
     $el = $xml.DeploymentOperation.ImportDeployDataSet
@@ -199,9 +187,8 @@ function ProcessPackage($pkg) {
     $packageFile = $pkg.Name
     "Processing $packageFile ..."
     $packageName = $pkg.BaseName
-    $DeployDataSet = "$DataSetDir\$packageName"
-    "DeployDataSet: $DeployDataSet"
-    $SourceDeployDataSet = $DeployDataSet
+    $deployDataSet = "$DataSetDir\$packageName"
+    "Deploy data set: $deployDataSet"
     $convertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
     "convertedDeployDataSet: $convertedDeployDataSet"
 
@@ -211,7 +198,7 @@ function ProcessPackage($pkg) {
         $null = mkdir $xmlDir
     }
 
-    ""; ExpandDeployPackage; ""
+    ""; ExpandDeployPackage($pkg.FullName); ""
     ConvertDeployDataSet; ""
     AnalyzeDeployDataSet; ""
     ImportDeployDataSet; ""
