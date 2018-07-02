@@ -9,7 +9,7 @@ operations they specify using the Deployment Manager command-line interface.
 
 .EXAMPLE
 dmtool.ps1 -Build `
--Package deployment_20120101-1.zip `
+-Package "C:\packages\deployment_20120101-1.zip" `
 -SourceEnvironment "Development" `
 -Pair "Development - Test" `
 -TemplateDir "C:\dmtool\Templates" `
@@ -92,12 +92,13 @@ param (
     [string]$ConvertedDataSetDir = $($DataSetDir),
 
     # Path to deployment manager executable.
-    # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager.exe
-    [string]$DeploymentManager = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager.exe",
+    # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd
+    [string]$DeploymentManager = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd",
     # Path to deployment tree.
     # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData
     [string]$DeploymentTree = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData",
     # Deployment tree version.
+    # Default value: 5.2.0
     [string]$DeploymentTreeVersion = "5.2.0",
 
     # Name of file created by AnalyzeDeployDataSet operation.
@@ -288,6 +289,10 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
     "ConvertDeployDataSet"
     & $DeploymentManager -o "$xmlDir\$ConvertDeployDataSetXML"
 
+    if (! $Password) {
+        $Password = Read-Host -prompt "Password:"
+    }
+
     "AnalyzeDeployDataSet"
     & $DeploymentManager -o "$xmlDir\$AnalyzeDeployDataSetXML" -p $Password
 
@@ -298,7 +303,7 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
 }
 
 function SetDeployPackage( [string]$ExpandDeployPackagePath, [string]$DeployPackagePath ) {
-    "DeployPackage: " + $DeployPackagePath
+    "DeployPackage: $DeployPackagePath"
     [xml]$xml = Get-Content $ExpandDeployPackagePath -ErrorAction Stop
 
     $xml.DeploymentOperation.ExpandDeployPackage.DeployPackage = $DeployPackagePath
@@ -311,7 +316,7 @@ function SetDeployPackage( [string]$ExpandDeployPackagePath, [string]$DeployPack
 }
 
 function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath ) {
-    "OptionSet: " + $OptionSetPath
+    "OptionSet: $OptionSetPath"
     [xml]$xml = Get-Content $ImportDeployDataSetPath -ErrorAction Stop
 
     $xml.DeploymentOperation.ImportDeployDataSet.OptionSetPath = $OptionSetPath
