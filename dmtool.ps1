@@ -74,10 +74,8 @@ param (
     [string]$SourceEnvironment,
     # Source-destination pair name.
     [string]$Pair,
-    # Source environment password.
-    [switch]$SourcePassword,
-    # Destination environment password.
-    [switch]$DestinationPassword,
+    # Password.
+    [string]$Password,
 
     # Path to existing import option XML.
     [string]$OptionSet,
@@ -291,12 +289,12 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
     & $DeploymentManager -o "$xmlDir\$ConvertDeployDataSetXML"
 
     "AnalyzeDeployDataSet"
-    & $DeploymentManager -o "$xmlDir\$AnalyzeDeployDataSetXML" -p $DestinationPassword
+    & $DeploymentManager -o "$xmlDir\$AnalyzeDeployDataSetXML" -p $Password
 
     "ImportDeployDataSet"
     $path = "$xmlDir\$ImportDeployDataSetXML"
     SetOptionSet $path "$xmlDir\$ImportOptionsXML"
-    & $DeploymentManager -o $path -p $SourcePassword
+    & $DeploymentManager -o $path -p $Password
 }
 
 function SetDeployPackage( [string]$ExpandDeployPackagePath, [string]$DeployPackagePath ) {
