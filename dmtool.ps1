@@ -5,7 +5,7 @@ IBM Deployment Manager tool.
 
 .DESCRIPTION
 Build IBM Deployment Manager deployment operation files and perform the
-operations they specify using the command-line interface.
+operations they specify using the Deployment Manager command-line interface.
 
 .EXAMPLE
 dmtool.ps1 -Build `
@@ -13,7 +13,8 @@ dmtool.ps1 -Build `
 -SourceEnvironment "Development" `
 -Pair "Development - Test" `
 -TemplateDir "C:\dmtool\Templates" `
--DataSetDir "P8DeploymentData/Environments/Development/Assets"
+-DataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets" `
+-ConvertedDataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets"
 
 Build deployment operation files for deployment_20120101-1.zip
 for deployment on Test with Development as source.
@@ -31,17 +32,18 @@ dmtool.ps1 -Build `
 -SourceEnvironment "Development" `
 -Pair "Development - Test" `
 -TemplateDir "C:\dmtool\Templates" `
--DataSetDir "P8DeploymentData/Environments/Development/Assets"
+-DataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets" `
+-ConvertedDataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets"
 
 Build deployment operation files for all packages in C:\packages.
 
 .EXAMPLE
-dmtool.ps1 -Deploy -Package deployment_20120101-1.zip -SourcePassword ***
+dmtool.ps1 -Deploy -Package deployment_20120101-1.zip -Password ***
 
 Perform deployment operations for deployment_20120101-1.zip.
 
 .EXAMPLE
-dmtool.ps1 -Deploy -PackageDir C:\packages -SourcePassword ***
+dmtool.ps1 -Deploy -PackageDir C:\packages -Password ***
 
 Perform deployment operations for all packages in C:\packages.
 
@@ -165,7 +167,7 @@ function CreateExpandDeployPackageXML( [string]$packagePath ) {
 
     $el.Environment = $SourceEnvironment
     $el.DeployDataSet = $DeployDataSet
-    $el.DeployPackage = $packagePath
+    $el.DeployPackage = "" # will be set on deployment
 
     WriteXML $xml $ExpandDeployPackageXML
 }
@@ -216,9 +218,6 @@ function CreateImportDeployDataSetXML {
 }
 
 function CreateOptionSetXML {
-    if (! $OptionSet) {
-        $OptionSet = "$TemplateDir\$ImportOptionsXML"
-    }
     [xml]$xml = Get-Content $OptionSet -ErrorAction Stop
 
     $el = $xml.DeploymentOptions
@@ -284,7 +283,9 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
     }
 
     "ExpandDeployPackage"
-    & $DeploymentManager -o "$xmlDir\$ExpandDeployPackageXML"
+    $path = "$xmlDir\$ExpandDeployPackageXML"
+    SetDeployPackage $path $pkg.FullName
+    & $DeploymentManager -o $path
 
     "ConvertDeployDataSet"
     & $DeploymentManager -o "$xmlDir\$ConvertDeployDataSetXML"
@@ -293,16 +294,29 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
     & $DeploymentManager -o "$xmlDir\$AnalyzeDeployDataSetXML" -p $DestinationPassword
 
     "ImportDeployDataSet"
-    $path = "$xmlDir\$ImportDeployDataSetXML";
-    SetOptionSet $path "$xmlDir\$ImportOptionsXML";
+    $path = "$xmlDir\$ImportDeployDataSetXML"
+    SetOptionSet $path "$xmlDir\$ImportOptionsXML"
     & $DeploymentManager -o $path -p $SourcePassword
+}
+
+function SetDeployPackage( [string]$ExpandDeployPackagePath, [string]$DeployPackagePath ) {
+    "DeployPackage: " + $DeployPackagePath
+    [xml]$xml = Get-Content $ExpandDeployPackagePath -ErrorAction Stop
+
+    $xml.DeploymentOperation.ExpandDeployPackage.DeployPackage = $DeployPackagePath
+    try {
+        $xml.Save($ExpandDeployPackagePath)
+    } catch {
+        $error[0].Exception
+        exit
+    }
 }
 
 function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath ) {
     "OptionSet: " + $OptionSetPath
     [xml]$xml = Get-Content $ImportDeployDataSetPath -ErrorAction Stop
 
-    $el = $xml.DeploymentOperation.ImportDeployDataSet.OptionSetPath = $OptionSetPath
+    $xml.DeploymentOperation.ImportDeployDataSet.OptionSetPath = $OptionSetPath
     try {
         $xml.Save($ImportDeployDataSetPath)
     } catch {
@@ -332,16 +346,18 @@ function GetPackages {
 
 $packages = GetPackages
 
-if ($OptionSet) {
-    $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
-}
-
 if ($Build) {
+    $TemplateDir = Resolve-Path $TemplateDir -ErrorAction Stop
     "Template directory: $TemplateDir"
     "Deployment tree: $DeploymentTree"
     "Analysis report: $AnalysisReportFileName"
-    "Option set: $OptionSet"
 
+    if ($OptionSet) {
+        $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
+    } else {
+        $OptionSet = Resolve-Path "$TemplateDir\$ImportOptionsXML"
+    }
+    "Option set: $OptionSet"
     "Source environment: $SourceEnvironment"
     "Source-destination pair: $Pair`n"
 
