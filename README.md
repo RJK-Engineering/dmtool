@@ -1,6 +1,6 @@
 # dmtool
 
-IBM Deployment Manager tool.
+![.\dmtool.ps1 -Help](help.png)
 
 # Description
 
