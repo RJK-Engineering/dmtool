@@ -13,7 +13,7 @@ operations they specify using the command-line interface.
    * hardcoded per-deployment op. settings
    * optionset
 
-## load templates once!
+## optimization: load templates once!
 
 ```
 function LoadTemplates {
