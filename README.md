@@ -9,7 +9,6 @@ operations they specify using the command-line interface.
 
 # To Do
 
-* source/destpassword?
 * params for:
    * hardcoded per-deployment op. settings
    * optionset
