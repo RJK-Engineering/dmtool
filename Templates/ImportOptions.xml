@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DeploymentOptions version="5.2.1">
+  <ImportOptions>
+    <Environment>environment_name</Environment>
+    <DeployDataSet>deploy_dataset_name</DeployDataSet>
+
+    <UpdateOption>UpdateIfNewer|UpdateAlways|UpdateNotAllowed</UpdateOption>
+    <CreateOption>CreateAlways|CreateNotAllowed</CreateOption>
+    <WorkflowConfigurationOption>Overwrite|Merge</WorkflowConfigurationOption>
+
+    <ImportSecurity value="true|false" />
+    <ImportOwner value="true|false" />
+    <ImportObjectId value="true|false" />
+    <UseOriginalTimestamps value="true|false" />
+    <ImportRetention value="true|false" />
+    <RemovePropertyDefinitions value="true|false" />
+    <TransferWorkflows value="true|false" />
+
+    <AuditOption>AuditOnly|ImportWithAudit|ImportOnly</AuditOption>
+
+    <DeleteCreatedFilesOnError value="true|false" />
+    <ReportFileName>AuditFile</ReportFileName>
+
+    <UpdateLocalizedProperties value="true|false" />
+
+    <StoragePolicy type="DefaultOnClassOnDestination|PropertyOnExportedObject|SpecificOnDestination">
+      <ID>storage_policy_GUID</ID>
+    </StoragePolicy>
+  </ImportOptions>
+</DeploymentOptions>
