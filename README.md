@@ -7,11 +7,19 @@
 Build IBM Deployment Manager deployment operation files and perform the
 operations they specify using the command-line interface.
 
+# Allow running of PowerShell scripts
+
+```
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
+```
+
 # To Do
 
-* params for:
-   * hardcoded per-deployment op. settings
-   * optionset
+* Params for:
+    * hardcoded per-deployment op. settings
+    * optionset
+* Logging?
+    * use DeploymentManager.exe / DeploymentManagerCmd.bat ?
 
 ## optimization: load templates once!
 
