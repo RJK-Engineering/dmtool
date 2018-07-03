@@ -43,3 +43,10 @@ function LoadTemplates {
 
 $templates = LoadTemplates
 ```
+
+# Notes
+
+* Using CLI doesn't write anything to C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\deployment.log
+* DeploymentManager.exe executes silently in background
+* DeploymentManagerCmd.bat prints output and exits when completed
+* Both commands DO NOT return an exit code > 0 on error, thus exit code can't be used to check for successful execution
