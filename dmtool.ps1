@@ -111,7 +111,9 @@ param (
     [string]$AnalysisReportFileName = "ChangeImpactReport.xml",
 
     # Display help.
-    [switch]$help
+    [switch]$help,
+    # Do not execute Deployment Manager but display command.
+    [switch]$test
 )
 
 if ($help) {
@@ -286,25 +288,37 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
         "Deployment operation file directory does not exist: $xmlDir"
     }
 
-    "ExpandDeployPackage"
     $path = "$xmlDir\$ExpandDeployPackageXML"
     SetDeployPackage $path $pkg.FullName
-    & $DeploymentManager -o $path
+    "ExpandDeployPackage"
+    Run $path
 
     "ConvertDeployDataSet"
-    & $DeploymentManager -o "$xmlDir\$ConvertDeployDataSetXML"
+    Run "$xmlDir\$ConvertDeployDataSetXML"
 
     if (! $Password) {
         $Password = Read-Host -prompt "Password:"
     }
 
     "AnalyzeDeployDataSet"
-    & $DeploymentManager -o "$xmlDir\$AnalyzeDeployDataSetXML" -p $Password
+    Run "$xmlDir\$AnalyzeDeployDataSetXML" $Password
 
     "ImportDeployDataSet"
     $path = "$xmlDir\$ImportDeployDataSetXML"
     SetOptionSet $path "$xmlDir\$ImportOptionsXML"
-    & $DeploymentManager -o $path -p $Password
+    Run $path $Password
+}
+
+function Run( [string]$opFile, [string]$password ) {
+    "Press enter to continue, ctrl+c to stop"
+    Read-Host
+    if ($Test) {
+        "& $DeploymentManager -o $opFile -p $password"
+    } elseif ($Password) {
+        & $DeploymentManager -o $opFile -p $password
+    } else {
+        & $DeploymentManager -o $opFile
+    }
 }
 
 function SetDeployPackage( [string]$ExpandDeployPackagePath, [string]$DeployPackagePath ) {
