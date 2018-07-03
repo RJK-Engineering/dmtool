@@ -47,6 +47,11 @@ dmtool.ps1 -Deploy -PackageDir C:\packages -Password ***
 
 Perform deployment operations for all packages in C:\packages.
 
+.EXAMPLE
+dmtool.ps1 -Deploy
+
+Perform deployment operations for all packages in current working directory and ask for password.
+
 .NOTES
 Deployment operations reference:
 https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm
