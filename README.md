@@ -15,11 +15,16 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
 
 # To Do
 
+* Required parameters check
+* use $DeploymentTree to construct $datasetdir/$exportmanifest
 * Params for:
     * hardcoded per-deployment op. settings
     * optionset
 * Logging?
     * use DeploymentManager.exe / DeploymentManagerCmd.bat ?
+    * CLI warnings:
+        * WARN [main] common.ConsoleThread - Unable to locate default logging configuration file: P:\dmtool\log4j.properties
+        * WARN [main] common.ConsoleThread - No log4j appenders could be found - will default to console output only.
 
 ## optimization: load templates once!
 
