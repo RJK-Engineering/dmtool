@@ -7,6 +7,32 @@ IBM Deployment Manager tool.
 Build IBM Deployment Manager deployment operation files and perform the
 operations they specify using the Deployment Manager command-line interface.
 
+Actions: -Export, -Build, -Deploy
+
+Required parameters for -Export:
+- TemplateDir
+- SourceEnvironment
+- ExportManifest
+- DataSetDir
+Optional:
+- Package (if not provided: create package in current working directory using name of ExportManifest)
+- Password (if not provided: prompt for user input)
+
+Required parameters for -Build:
+- Package or PackageDir
+- TemplateDir
+- DataSetDir
+- SourceEnvironment
+- Pair
+Optional:
+- ConvertedDataSetDir (if not provided: DataSetDir value)
+- OptionSetPath
+
+Required parameters for -Deploy:
+- Package or PackageDir
+Optional:
+- Password (if not provided: prompt for user input)
+
 .EXAMPLE
 dmtool.ps1 -Build `
 -Package "C:\packages\deployment_20120101-1.zip" `
@@ -65,6 +91,8 @@ https://github.com/RJK-Engineering/dmtool
 #>
 
 param (
+    # Create deployment package.
+    [switch]$Export,
     # Build deployment operation files.
     [switch]$Build,
     # Perform deployment operations.
@@ -74,6 +102,9 @@ param (
     [string]$Package,
     # Path to directory containing deployment packages.
     [string]$PackageDir,
+
+    # Export Manifest.
+    [string]$ExportManifest,
 
     # Source environment name.
     [string]$SourceEnvironment,
@@ -119,11 +150,16 @@ param (
 if ($help) {
     Get-Help $PSCommandPath -detailed
     exit
-} elseif (! ($Build -or $Deploy)) {
-    "Use -Build or -Deploy."
+} elseif (! ($Export -or $Build -or $Deploy)) {
+    "Use -Export, -Build or -Deploy."
     exit
 }
 
+# -Export
+$ExportDeployDataSetXML = "ExportDeployDataSet.xml"
+$CreateDeployPackageXML = "CreateDeployPackage.xml"
+
+# -Build
 $ExpandDeployPackageXML = "ExpandDeployPackage.xml"
 $ConvertDeployDataSetXML = "ConvertDeployDataSet.xml"
 $AnalyzeDeployDataSetXML = "AnalyzeDeployDataSet.xml"
@@ -159,7 +195,36 @@ function WriteXML( [xml]$xml, [string]$file ) {
         $error[0].Exception
         exit
     }
-    "Created: $out"
+    "Created $out"
+}
+
+function ExportDeployDataSet( [string]$DeployDataSet ) {
+    $deleteDestinationFilesOnError="false"
+
+    $xml = GetXML $ExportDeployDataSetXML
+    $el = $xml.DeploymentOperation.ExportDeployDataSet
+    $el.deleteDestinationFilesOnError = $deleteDestinationFilesOnError
+    $el.Environment = $SourceEnvironment
+    $el.ExportManifest = $ExportManifest
+    $el.DeployDataSet = $DeployDataSet
+
+    WriteXML $xml $ExportDeployDataSetXML
+}
+
+function CreateDeployPackage( [string]$DeployDataSet, [string]$packagePath ) {
+    $includeHalfMaps="false"
+    $overwritePackage="false"
+
+    $xml = GetXML $CreateDeployPackageXML
+    $el = $xml.DeploymentOperation.CreateDeployPackage
+    $el.includeHalfMaps = $includeHalfMaps
+    $el.overwritePackage = $overwritePackage
+
+    $el.Environment = $SourceEnvironment
+    $el.DeployDataSet = $DeployDataSet
+    $el.DeployPackage = $packagePath
+
+    WriteXML $xml $CreateDeployPackageXML
 }
 
 function CreateExpandDeployPackageXML( [string]$packagePath ) {
@@ -261,6 +326,52 @@ function CreateOptionSetXML {
 
 ###########################################################
 
+function Export {
+    if (! (Test-Path $ExportManifest)) {
+        "Export manifest not found"
+        exit
+    }
+    $ExportManifestItem = Get-Item $ExportManifest -ErrorAction Stop
+
+    if (! $Package) {
+        $Package = Join-Path (Get-Location) "$($ExportManifestItem.BaseName).zip"
+    }
+    if (Test-Path $Package) {
+        "Package already exists"
+        exit
+    }
+
+    $dir = Split-Path $Package -parent
+    if (! (Test-Path $dir)) {
+        "Directory does not exist: $dir"
+        exit
+    }
+    $file = Split-Path $Package -leaf
+    $baseName = $file -replace '\.\w+$'
+
+    "Package: $Package"
+    "Environment: $SourceEnvironment"
+    "Export manifest: $ExportManifest"
+    $DeployDataSet = "$DataSetDir\$baseName"
+    "Deploy data set: $DeployDataSet"
+
+    $xmlDir = "$dir\$baseName"
+    if (-not (Test-Path $xmlDir)) {
+        $null = mkdir $xmlDir -ErrorAction Stop
+        "Created $xmlDir"
+    }
+
+    ExportDeployDataSet $DeployDataSet
+    CreateDeployPackage $DeployDataSet $Package
+
+    if (! $Password) {
+        $Password = Read-Host -prompt "Password"
+    }
+
+    Run "$xmlDir\$ExportDeployDataSetXML" $Password
+    Run "$xmlDir\$CreateDeployPackageXML"
+}
+
 function BuildOperationFiles( [System.IO.FileInfo]$pkg ) {
     "Processing $pkg ..."
     $packageName = $pkg.BaseName
@@ -271,7 +382,7 @@ function BuildOperationFiles( [System.IO.FileInfo]$pkg ) {
 
     $xmlDir = "$($pkg.Directory.FullName)\$($pkg.BaseName)"
     if (-not (Test-Path $xmlDir)) {
-        $null = mkdir $xmlDir
+        $null = mkdir $xmlDir -ErrorAction Stop
         "Created $xmlDir"
     }
 
@@ -290,27 +401,23 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
 
     $path = "$xmlDir\$ExpandDeployPackageXML"
     SetDeployPackage $path $pkg.FullName
-    "ExpandDeployPackage"
     Run $path
 
-    "ConvertDeployDataSet"
     Run "$xmlDir\$ConvertDeployDataSetXML"
 
     if (! $Password) {
-        $Password = Read-Host -prompt "Password:"
+        $Password = Read-Host -prompt "Password"
     }
 
-    "AnalyzeDeployDataSet"
     Run "$xmlDir\$AnalyzeDeployDataSetXML" $Password
 
-    "ImportDeployDataSet"
     $path = "$xmlDir\$ImportDeployDataSetXML"
     SetOptionSet $path "$xmlDir\$ImportOptionsXML"
     Run $path $Password
 }
 
 function Run( [string]$opFile, [string]$password ) {
-    "Press enter to continue, ctrl+c to stop"
+    "Starting $opfile, press enter to continue, ctrl+c to stop"
     Read-Host
     if ($Test) {
         "& $DeploymentManager -o $opFile -p $password"
@@ -352,6 +459,7 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
 function GetPackages {
     if ($Package) {
         Get-Item $Package -ErrorAction Stop
+        write-host "Package: $Package"
     } else {
         if (! $PackageDir) { $PackageDir = "." }
         $PackageDir = Resolve-Path $PackageDir -ErrorAction Stop
@@ -366,30 +474,34 @@ function GetPackages {
     }
 }
 
-$packages = GetPackages
-
-if ($Build) {
-    $TemplateDir = Resolve-Path $TemplateDir -ErrorAction Stop
-    "Template directory: $TemplateDir"
-    "Deployment tree: $DeploymentTree"
-    "Analysis report: $AnalysisReportFileName"
-
-    if ($OptionSet) {
-        $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
-    } else {
-        $OptionSet = Resolve-Path "$TemplateDir\$ImportOptionsXML"
-    }
-    "Option set: $OptionSet"
-    "Source environment: $SourceEnvironment"
-    "Source-destination pair: $Pair`n"
-
-    $action = "BuildOperationFiles"
+if ($Export) {
+    Export
 } else {
-    $action = "Deploy"
-}
+    $packages = GetPackages
+    if ($Build) {
+        $TemplateDir = Resolve-Path $TemplateDir -ErrorAction Stop
+        "Template directory: $TemplateDir"
+        "Deployment tree: $DeploymentTree"
+        "Analysis report: $AnalysisReportFileName"
 
-foreach ($pkg in $packages) {
-    & $action $pkg
+        if ($OptionSet) {
+            $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
+        } else {
+            $OptionSet = Resolve-Path "$TemplateDir\$ImportOptionsXML"
+        }
+        "Option set: $OptionSet"
+        "Source environment: $SourceEnvironment"
+        "Source-destination pair: $Pair`n"
+
+        $action = "BuildOperationFiles"
+    } else {
+        $packages = GetPackages
+        $action = "Deploy"
+    }
+
+    foreach ($pkg in $packages) {
+        & $action $pkg
+    }
 }
 
 "Done."
