@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
-  <CreateDeployPackage includeHalf-Maps="value" overwritePackage="value">
+  <CreateDeployPackage includeHalfMaps="value" overwritePackage="value">
     <Environment>environment_name</Environment>
     <DeployDataSet>deploy_dataset_name</DeployDataSet>
     <DeployPackage>deploy_zip_name</DeployPackage>

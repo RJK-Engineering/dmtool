@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <DeploymentOperation deploymentTreeLocation="deployment_tree_location_name" version="version_number">
-  <ValidateDeployDataSet deleteDestinationFilesOnError="value">
+  <ExportDeployDataSet deleteDestinationFilesOnError="value">
     <Environment>environment_name</Environment>
     <ExportManifest>export_manifest_filename_path</ExportManifest>
     <DeployDataSet>deploy_dataset_name</DeployDataSet>
-  </ValidateDeployDataSet>
+  </ExportDeployDataSet>
 </DeploymentOperation>
