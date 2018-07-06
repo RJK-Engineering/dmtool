@@ -15,32 +15,33 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
 
 # Deployment operations
 
-## setup
-[RetrievePrincipalInfoFromDomain](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrievePrincipalInfoFromDomain_main)
-[RetrievePrincipalInfoFromDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrievePrincipalInfoFromDeployDataSet_main)
-[RetrieveObjectStoreInfoFromDomain](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrieveObjectStoreInfoFromDomain_main)
-[RetrieveObjectStoreInfoFromDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrieveObjectStoreInfoFromDeployDataSet_main)
-[RetrieveServiceInfoFromDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrieveServiceInfoFromDeployDataSet_main)
-[RetrieveInfoFromEnvironment](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrieveInfoFromEnvironment_main)
-[CreateEnvironment](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__CreateEnvironment_main)
-[?ReassignObjectStore](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__?ReassignObjectStore_main)
+### setup
+* RetrievePrincipalInfoFromDomain
+* RetrievePrincipalInfoFromDeployDataSet
+* RetrieveObjectStoreInfoFromDomain
+* RetrieveObjectStoreInfoFromDeployDataSet
+* RetrieveServiceInfoFromDeployDataSet
+* RetrieveInfoFromEnvironment
+* CreateEnvironment
+* ? ReassignObjectStore
 
-## source export
-[ExportDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__ExportDeployDataSet_main)
-[CreateDeployPackage](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__CreateDeployPackage_main)
 
-## destination import
-[ExpandDeployPackage](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__ExpandDeployPackage_main)
-[ConvertDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__ConvertDeployDataSet_main)
-[AnalyzeDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__AnalyzeDeployDataSet_main)
-[ImportDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__ImportDeployDataSet_main)
+### source export
+* ExportDeployDataSet
+* CreateDeployPackage
 
-## ?
-[MapData](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__MapData_main)
-[GenerateAuditReport](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__GenerateAuditReport_main)
-[UpgradeDeploymentTree](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__UpgradeDeploymentTree_main)
-[RetrieveConnectionPointInfoFromDeployDataSet](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrieveConnectionPointInfoFromDeployDataSet_main)
-[RetrieveConnectionPointInfoFromDomain](https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm#deploy_operation_formats__RetrieveConnectionPointInfoFromDomain_main)
+### destination import
+* ExpandDeployPackage
+* ConvertDeployDataSet
+* AnalyzeDeployDataSet
+* ImportDeployDataSet
+
+### ?
+* MapData
+* GenerateAuditReport
+* UpgradeDeploymentTree
+* RetrieveConnectionPointInfoFromDeployDataSet
+* RetrieveConnectionPointInfoFromDomain
 
 
 # To Do
@@ -56,7 +57,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
         * WARN [main] common.ConsoleThread - Unable to locate default logging configuration file: P:\dmtool\log4j.properties
         * WARN [main] common.ConsoleThread - No log4j appenders could be found - will default to console output only.
 
-## optimization: load templates once!
+### optimization: load templates once!
 
 ```
 function LoadTemplates {
