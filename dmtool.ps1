@@ -78,15 +78,15 @@ dmtool.ps1 -Deploy
 
 Perform deployment operations for all packages in current working directory and ask for password.
 
-.NOTES
+.LINK
+Source repository:
+https://github.com/RJK-Engineering/dmtool
+
 Deployment operations reference:
 https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_operation_formats.htm
 
 Import options reference:
 https://www.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.common.deploy.doc/deploy_mgr_command_line_importoptions_syntax.htm
-
-.LINK
-https://github.com/RJK-Engineering/dmtool
 
 #>
 
@@ -168,6 +168,24 @@ $ImportOptionsXML = "ImportOptions.xml"
 
 ###########################################################
 
+function GetPackages {
+    if ($Package) {
+        Get-Item $Package -ErrorAction Stop
+        write-host "Package: $Package"
+    } else {
+        if (! $PackageDir) { $PackageDir = "." }
+        $PackageDir = Resolve-Path $PackageDir -ErrorAction Stop
+
+        $packages = Get-ChildItem $PackageDir -filter *.zip -ErrorAction Stop
+        if (! $packages) {
+            write-host "No packages found in $PackageDir"
+            exit
+        }
+        write-host "Found $($packages.count) package(s) in $PackageDir"
+        $packages
+    }
+}
+
 function GetXML {
     <#
         .DESCRIPTION
@@ -197,6 +215,8 @@ function WriteXML( [xml]$xml, [string]$file ) {
     }
     "Created $out"
 }
+
+###########################################################
 
 function ExportDeployDataSet( [string]$DeployDataSet ) {
     $deleteDestinationFilesOnError="false"
@@ -455,24 +475,6 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
 }
 
 ###########################################################
-
-function GetPackages {
-    if ($Package) {
-        Get-Item $Package -ErrorAction Stop
-        write-host "Package: $Package"
-    } else {
-        if (! $PackageDir) { $PackageDir = "." }
-        $PackageDir = Resolve-Path $PackageDir -ErrorAction Stop
-
-        $packages = Get-ChildItem $PackageDir -filter *.zip -ErrorAction Stop
-        if (! $packages) {
-            write-host "No packages found in $PackageDir"
-            exit
-        }
-        write-host "Found $($packages.count) package(s) in $PackageDir"
-        $packages
-    }
-}
 
 if ($Export) {
     Export
