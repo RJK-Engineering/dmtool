@@ -142,12 +142,14 @@ param (
     [string]$AnalysisReportFileName = "ChangeImpactReport.xml",
 
     # Display help.
-    [switch]$help,
+    [switch]$Help,
     # Do not execute Deployment Manager but display command.
-    [switch]$test
+    [switch]$Test,
+    # Wait for user confirmation before Deployment Manager execution.
+    [switch]$Confirm
 )
 
-if ($help) {
+if ($Help) {
     Get-Help $PSCommandPath -detailed
     exit
 } elseif (! ($Export -or $Build -or $Deploy)) {
@@ -437,8 +439,10 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
 }
 
 function Run( [string]$opFile, [string]$password ) {
-    "Starting $opfile, press enter to continue, ctrl+c to stop"
-    Read-Host
+    if ($Confirm) {
+        "Starting $opfile, press enter to continue, ctrl+c to stop"
+        Read-Host
+    }
     if ($Test) {
         "& $DeploymentManager -o $opFile -p $password"
     } elseif ($Password) {
