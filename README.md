@@ -15,7 +15,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
 
 # Deployment operations
 
-### setup
+#### setup
 * RetrievePrincipalInfoFromDomain
 * RetrievePrincipalInfoFromDeployDataSet
 * RetrieveObjectStoreInfoFromDomain
@@ -26,17 +26,17 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
 * ? ReassignObjectStore
 
 
-### source export
+#### source export
 * ExportDeployDataSet
 * CreateDeployPackage
 
-### destination import
+#### destination import
 * ExpandDeployPackage
 * ConvertDeployDataSet
 * AnalyzeDeployDataSet
 * ImportDeployDataSet
 
-### ?
+#### ?
 * MapData
 * GenerateAuditReport
 * UpgradeDeploymentTree
@@ -57,7 +57,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
         * WARN [main] common.ConsoleThread - Unable to locate default logging configuration file: P:\dmtool\log4j.properties
         * WARN [main] common.ConsoleThread - No log4j appenders could be found - will default to console output only.
 
-### optimization: load templates once!
+#### optimization: load templates once!
 
 ```
 function LoadTemplates {
