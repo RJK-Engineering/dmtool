@@ -250,7 +250,7 @@ function CreateDeployPackage( [string]$DeployDataSet, [string]$packagePath ) {
 
 function CreateExpandDeployPackageXML( [string]$packagePath ) {
     $createEnvironment="false"
-    $halfMapMode="merge"
+    $halfMapMode="LeaveAsIs"
 
     $xml = GetXML $ExpandDeployPackageXML
     $el = $xml.DeploymentOperation.ExpandDeployPackage
@@ -500,7 +500,6 @@ if ($Export) {
 
         $action = "BuildOperationFiles"
     } else {
-        $packages = GetPackages
         $action = "Deploy"
     }
 
