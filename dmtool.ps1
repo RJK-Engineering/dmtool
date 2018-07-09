@@ -19,18 +19,17 @@ Optional:
 - Password (if not provided: prompt for user input)
 
 Required parameters for -Build:
-- Package or PackageDir
 - TemplateDir
 - DataSetDir
 - SourceEnvironment
 - Pair
 Optional:
+- Package or PackageDir
 - ConvertedDataSetDir (if not provided: DataSetDir value)
 - OptionSetPath
 
-Required parameters for -Deploy:
+Optional parameters for -Deploy:
 - Package or PackageDir
-Optional:
 - Password (if not provided: prompt for user input)
 
 .EXAMPLE
