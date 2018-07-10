@@ -4,7 +4,7 @@ $settings = @{
     DataSetDir = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\kiwi Ontwikkel (Nieuwe)\Assets"
     ConvertedDataSetDir = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\kiwi Test\Assets"
     SourceEnvironment = "kiwi Ontwikkel (Nieuwe)"
-    TargetEnvironment = "kiwi Test"
+    DestinationEnvironment = "kiwi Test"
     Pair = "Ontwikkel (Nieuwe) - Test"
 }
 

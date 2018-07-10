@@ -22,12 +22,12 @@ Required parameters for -Build:
 - TemplateDir
 - DataSetDir
 - SourceEnvironment
-- TargetEnvironment
+- DestinationEnvironment
 - Pair
 Optional:
 - Package or PackageDir
 - ConvertedDataSetDir (if not provided: DataSetDir value)
-- OptionSetPath
+- OptionSet
 
 Optional parameters for -Deploy:
 - Package or PackageDir
@@ -108,6 +108,8 @@ param (
 
     # Source environment name.
     [string]$SourceEnvironment,
+    # Destination environment name.
+    [string]$DestinationEnvironment,
     # Source-destination pair name.
     [string]$Pair,
     # Password.
@@ -303,7 +305,7 @@ function CreateAnalyzeDeployDataSetXML {
 function CreateImportDeployDataSetXML {
     $xml = GetXML $ImportDeployDataSetXML
     $el = $xml.DeploymentOperation.ImportDeployDataSet
-    $el.Environment = $TargetEnvironment
+    $el.Environment = $DestinationEnvironment
     $el.DeployDataSet = $ConvertedDeployDataSet
     $el.OptionSetPath = "" # will be set on deployment
 
@@ -412,7 +414,9 @@ function BuildOperationFiles( [System.IO.FileInfo]$pkg ) {
     CreateConvertDeployDataSetXML
     CreateAnalyzeDeployDataSetXML
     CreateImportDeployDataSetXML
-    CreateOptionSetXML
+    if ($OptionSet) {
+        CreateOptionSetXML
+    }
 }
 
 function Deploy( [System.IO.FileInfo]$pkg ) {
@@ -433,9 +437,12 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
 
     Run "$xmlDir\$AnalyzeDeployDataSetXML" $Password
 
-    $path = "$xmlDir\$ImportDeployDataSetXML"
-    SetOptionSet $path "$xmlDir\$ImportOptionsXML"
-    Run $path $Password
+    $importDeployDataSetPath = "$xmlDir\$ImportDeployDataSetXML"
+    $optionSetPath = "$xmlDir\$ImportOptionsXML"
+    if (Test-Path $optionSetPath) {
+        SetOptionSet $importDeployDataSetPath $optionSetPath
+    }
+    Run $importDeployDataSetPath $Password
 }
 
 function Run( [string]$opFile, [string]$password ) {
@@ -492,11 +499,12 @@ if ($Export) {
 
         if ($OptionSet) {
             $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
-        } else {
-            $OptionSet = Resolve-Path "$TemplateDir\$ImportOptionsXML"
+            "Option set: $OptionSet"
+        # } else {
+        #     $OptionSet = Resolve-Path "$TemplateDir\$ImportOptionsXML"
         }
-        "Option set: $OptionSet"
         "Source environment: $SourceEnvironment"
+        "Destination environment: $DestinationEnvironment"
         "Source-destination pair: $Pair`n"
 
         $action = "BuildOperationFiles"
