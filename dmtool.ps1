@@ -22,6 +22,7 @@ Required parameters for -Build:
 - TemplateDir
 - DataSetDir
 - SourceEnvironment
+- TargetEnvironment
 - Pair
 Optional:
 - Package or PackageDir
@@ -302,7 +303,7 @@ function CreateAnalyzeDeployDataSetXML {
 function CreateImportDeployDataSetXML {
     $xml = GetXML $ImportDeployDataSetXML
     $el = $xml.DeploymentOperation.ImportDeployDataSet
-    $el.Environment = $SourceEnvironment
+    $el.Environment = $TargetEnvironment
     $el.DeployDataSet = $ConvertedDeployDataSet
     $el.OptionSetPath = "" # will be set on deployment
 
@@ -439,7 +440,7 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
 
 function Run( [string]$opFile, [string]$password ) {
     if ($Confirm) {
-        "Starting $opfile, press enter to continue, ctrl+c to stop"
+        "Starting $opfile, press enter to continue, ctrl+c to abort"
         Read-Host
     }
     if ($Test) {
