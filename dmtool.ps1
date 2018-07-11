@@ -145,9 +145,9 @@ param (
 
     # Display help.
     [switch]$Help,
-    # Do not execute Deployment Manager but display command.
+    # Do not make any changes.
     [switch]$Test,
-    # Wait for user confirmation before Deployment Manager execution.
+    # Wait for user confirmation before executing Deployment Manager.
     [switch]$Confirm
 )
 
@@ -155,7 +155,7 @@ if ($Help) {
     Get-Help $PSCommandPath -detailed
     exit
 } elseif (! ($Export -or $Build -or $Deploy)) {
-    "Use -Export, -Build or -Deploy."
+    "Use -Export, -Build, -Deploy or -Help."
     exit
 }
 
@@ -180,7 +180,7 @@ function GetPackages {
         if (! $PackageDir) { $PackageDir = "." }
         $PackageDir = Resolve-Path $PackageDir -ErrorAction Stop
 
-        $packages = Get-ChildItem $PackageDir -filter *.zip -ErrorAction Stop
+        $packages = Get-ChildItem $PackageDir -filter *.zip -ErrorAction Stop | Sort-Object
         if (! $packages) {
             write-host "No packages found in $PackageDir"
             exit
@@ -379,6 +379,8 @@ function Export {
     $DeployDataSet = "$DataSetDir\$baseName"
     "Deploy data set: $DeployDataSet"
 
+    if ($Test) { return }
+
     $xmlDir = "$dir\$baseName"
     if (-not (Test-Path $xmlDir)) {
         $null = mkdir $xmlDir -ErrorAction Stop
@@ -403,6 +405,8 @@ function BuildOperationFiles( [System.IO.FileInfo]$pkg ) {
     "Deploy data set: $DeployDataSet"
     $ConvertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
     "Converted ddset: $ConvertedDeployDataSet"
+
+    if ($Test) { return }
 
     $xmlDir = "$($pkg.Directory.FullName)\$($pkg.BaseName)"
     if (-not (Test-Path $xmlDir)) {
@@ -431,7 +435,7 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
 
     Run "$xmlDir\$ConvertDeployDataSetXML"
 
-    if (! $Password) {
+    if (! $Password -and ! $Test) {
         $Password = Read-Host -prompt "Password"
     }
 
