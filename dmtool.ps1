@@ -34,7 +34,7 @@ Optional parameters for -Deploy:
 - Password (if not provided: prompt for user input)
 
 .EXAMPLE
-dmtool.ps1 -Build `
+dmtool -Build `
 -Package "C:\packages\deployment_20120101-1.zip" `
 -SourceEnvironment "Development" `
 -Pair "Development - Test" `
@@ -53,7 +53,7 @@ C:\packages\deployment_20120101-1\ExpandDeployPackage.xml
 C:\packages\deployment_20120101-1\ImportDeployDataSet.xml
 
 .EXAMPLE
-dmtool.ps1 -Build `
+dmtool -Build `
 -PackageDir "C:\packages" `
 -SourceEnvironment "Development" `
 -Pair "Development - Test" `
@@ -64,17 +64,17 @@ dmtool.ps1 -Build `
 Build deployment operation files for all packages in C:\packages.
 
 .EXAMPLE
-dmtool.ps1 -Deploy -Package deployment_20120101-1.zip -Password ***
+dmtool -Deploy -Package deployment_20120101-1.zip -Password ***
 
 Perform deployment operations for deployment_20120101-1.zip.
 
 .EXAMPLE
-dmtool.ps1 -Deploy -PackageDir C:\packages -Password ***
+dmtool -Deploy -PackageDir C:\packages -Password ***
 
 Perform deployment operations for all packages in C:\packages.
 
 .EXAMPLE
-dmtool.ps1 -Deploy
+dmtool -Deploy
 
 Perform deployment operations for all packages in current working directory and ask for password.
 
