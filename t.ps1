@@ -8,5 +8,4 @@ $settings = @{
     Pair = "Ontwikkel (Nieuwe) - Test"
 }
 
-$dir = (Get-Item $PSCommandPath).Directory.FullName
-& "$dir\dmtool.ps1" @args @settings
+& "$PSScriptRoot\dmtool.ps1" @args @settings

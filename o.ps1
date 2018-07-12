@@ -5,5 +5,4 @@ $settings = @{
     SourceEnvironment = "Ontwikkel"
 }
 
-$dir = (Get-Item $PSCommandPath).Directory.FullName
-& "$dir\dmtool.ps1" @args @settings
+& "$PSScriptRoot\dmtool.ps1" @args @settings
