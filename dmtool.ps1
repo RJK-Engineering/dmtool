@@ -510,8 +510,6 @@ if ($Export) {
         if ($OptionSet) {
             $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
             "Option set: $OptionSet"
-        # } else {
-        #     $OptionSet = Resolve-Path "$TemplateDir\$ImportOptionsXML"
         }
         "Source environment: $SourceEnvironment"
         "Destination environment: $DestinationEnvironment"
