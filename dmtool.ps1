@@ -35,12 +35,14 @@ Optional parameters for -Deploy:
 
 .EXAMPLE
 dmtool -Build `
--Package "C:\packages\deployment_20120101-1.zip" `
--SourceEnvironment "Development" `
+-Package C:\packages\deployment_20120101-1.zip `
+-SourceEnvironment Development `
+-DestinationEnvironment Test
 -Pair "Development - Test" `
--TemplateDir "C:\dmtool\Templates" `
--DataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets" `
--ConvertedDataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets"
+-TemplateDir C:\dmtool\Templates `
+-DataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets `
+-ConvertedDataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets `
+-OptionSet MyImportOptions.xml
 
 Build deployment operation files for deployment_20120101-1.zip
 for deployment on Test with Development as source.
@@ -54,12 +56,12 @@ C:\packages\deployment_20120101-1\ImportDeployDataSet.xml
 
 .EXAMPLE
 dmtool -Build `
--PackageDir "C:\packages" `
--SourceEnvironment "Development" `
+-PackageDir C:\packages `
+-SourceEnvironment Development `
 -Pair "Development - Test" `
--TemplateDir "C:\dmtool\Templates" `
--DataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets" `
--ConvertedDataSetDir "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets"
+-TemplateDir C:\dmtool\Templates `
+-DataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets `
+-ConvertedDataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets
 
 Build deployment operation files for all packages in C:\packages.
 
@@ -307,7 +309,8 @@ function CreateImportDeployDataSetXML {
     $el = $xml.DeploymentOperation.ImportDeployDataSet
     $el.Environment = $DestinationEnvironment
     $el.DeployDataSet = $ConvertedDeployDataSet
-    $el.OptionSetPath = "" # will be set on deployment
+    # OptionSetPath will be set on deployment
+    $el.SelectNodes("OptionSetPath") | foreach { $_.ParentNode.RemoveChild($_) }
 
     WriteXML $xml $ImportDeployDataSetXML
 }
