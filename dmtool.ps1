@@ -483,7 +483,10 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
     "OptionSet: $OptionSetPath"
     [xml]$xml = Get-Content $ImportDeployDataSetPath -ErrorAction Stop
 
-    $xml.DeploymentOperation.ImportDeployDataSet.OptionSetPath = $OptionSetPath
+    $el = $xml.DeploymentOperation.ImportDeployDataSet
+    $el.appendChild($xml.createelement("OptionSetPath"))
+    $el.OptionSetPath = $OptionSetPath
+
     try {
         $xml.Save($ImportDeployDataSetPath)
     } catch {
