@@ -151,6 +151,8 @@ param (
 
     # Display help.
     [switch]$Help,
+    # Delete files and directories created during -Export or -Deploy. Use in combination with respective switches.
+    [switch]$Clean,
     # Do not make any changes.
     [switch]$Test,
     # Wait for user confirmation before executing Deployment Manager.
@@ -367,10 +369,6 @@ function Export {
     if (! $Package) {
         $Package = Join-Path (Get-Location) "$($ExportManifestItem.BaseName).zip"
     }
-    if (Test-Path $Package) {
-        "Package already exists"
-        exit
-    }
 
     $dir = Split-Path $Package -parent
     if (! (Test-Path $dir)) {
@@ -379,6 +377,7 @@ function Export {
     }
     $file = Split-Path $Package -leaf
     $baseName = $file -replace '\.\w+$'
+    $xmlDir = "$dir\$baseName"
 
     "Package: $Package"
     "Environment: $SourceEnvironment"
@@ -386,9 +385,29 @@ function Export {
     $DeployDataSet = "$DataSetDir\$baseName"
     "Deploy data set: $DeployDataSet"
 
+    if ($Clean) {
+        if (Test-Path $xmlDir) {
+            Remove-Item $xmlDir -Recurse
+            "Deleted $xmlDir"
+        }
+        if (Test-Path $Package) {
+            Remove-Item $Package
+            "Deleted $Package"
+        }
+        if (Test-Path $DeployDataSet) {
+            Remove-Item $DeployDataSet -Recurse
+            "Deleted $DeployDataSet"
+        }
+        exit
+    }
+
+    if (Test-Path $Package) {
+        "Package already exists"
+        exit
+    }
+
     if ($Test) { return }
 
-    $xmlDir = "$dir\$baseName"
     if (-not (Test-Path $xmlDir)) {
         $null = mkdir $xmlDir -ErrorAction Stop
         "Created $xmlDir"
@@ -431,6 +450,21 @@ function BuildOperationFiles( [System.IO.FileInfo]$pkg ) {
 }
 
 function Deploy( [System.IO.FileInfo]$pkg ) {
+    if ($Clean) {
+        $packageName = $pkg.BaseName
+        $DeployDataSet = "$DataSetDir\$packageName"
+        $ConvertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
+        if (Test-Path $DeployDataSet) {
+            Remove-Item $DeployDataSet -Recurse
+            "Deleted $DeployDataSet"
+        }
+        if (Test-Path $ConvertedDeployDataSet) {
+            Remove-Item $ConvertedDeployDataSet -Recurse
+            "Deleted $ConvertedDeployDataSet"
+        }
+        exit
+    }
+
     $xmlDir = "$($pkg.Directory.FullName)\$($pkg.BaseName)"
     if (-not (Test-Path $xmlDir)) {
         "Deployment operation file directory does not exist: $xmlDir"
