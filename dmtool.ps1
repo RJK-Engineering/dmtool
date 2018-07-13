@@ -25,12 +25,12 @@ Required parameters for -Build:
 - DestinationEnvironment
 - Pair
 Optional:
-- Package or PackageDir
-- ConvertedDataSetDir (if not provided: DataSetDir value)
+- Package or PackageDir (if not provided: take all packages in current working directory sorted by name)
+- ConvertedDataSetDir (if not provided: -DataSetDir value)
 - OptionSet
 
 Optional parameters for -Deploy:
-- Package or PackageDir
+- Package or PackageDir (if not provided: take all packages in current working directory sorted by name)
 - Password (if not provided: prompt for user input)
 
 .EXAMPLE
@@ -58,10 +58,12 @@ C:\packages\deployment_20120101-1\ImportDeployDataSet.xml
 dmtool -Build `
 -PackageDir C:\packages `
 -SourceEnvironment Development `
+-DestinationEnvironment Test
 -Pair "Development - Test" `
 -TemplateDir C:\dmtool\Templates `
--DataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets `
--ConvertedDataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets
+-DeploymentTree C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData `
+-DataSetDir Environments\Development\Assets `
+-ConvertedDataSetDir Environments\Test\Assets
 
 Build deployment operation files for all packages in C:\packages.
 
@@ -101,8 +103,10 @@ param (
     [switch]$Deploy,
 
     # Path to deployment package.
+    # If no -Package or -PackageDir is provided, take all packages in current working directory sorted by name.
     [string]$Package,
     # Path to directory containing deployment packages.
+    # If no -Package or -PackageDir is provided, take all packages in current working directory sorted by name.
     [string]$PackageDir,
 
     # Export Manifest.
@@ -114,7 +118,7 @@ param (
     [string]$DestinationEnvironment,
     # Source-destination pair name.
     [string]$Pair,
-    # Password.
+    # Password. If not provided, prompt for user input.
     [string]$Password,
 
     # Path to existing import option XML.
