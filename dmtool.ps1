@@ -314,7 +314,7 @@ function CreateImportDeployDataSetXML {
     $el.Environment = $DestinationEnvironment
     $el.DeployDataSet = $ConvertedDeployDataSet
     # OptionSetPath will be set on deployment
-    $el.SelectNodes("OptionSetPath") | foreach { $_.ParentNode.RemoveChild($_) }
+    $null = $el.SelectNodes("OptionSetPath") | foreach { $_.ParentNode.RemoveChild($_) }
 
     WriteXML $xml $ImportDeployDataSetXML
 }
