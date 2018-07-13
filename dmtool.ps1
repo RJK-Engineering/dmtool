@@ -125,9 +125,9 @@ param (
 
     # Path to directory containing deployment operation file templates.
     [string]$TemplateDir,
-    # Path to deployment data set directory.
+    # Path to deployment data set directory. Relative paths will be appended to -DeploymentTree.
     [string]$DataSetDir,
-    # Path to converted deployment data set directory.
+    # Path to converted deployment data set directory. Relative paths will be appended to -DeploymentTree.
     # Default value: -DataSetDir parameter value
     [string]$ConvertedDataSetDir = $($DataSetDir),
 
@@ -496,6 +496,14 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
 }
 
 ###########################################################
+
+# Check for relative paths and make absolute
+foreach ($var in @("DataSetDir", "ConvertedDataSetDir")) {
+    $path = (Get-Variable $var).value
+    if ($path -and ! [System.IO.Path]::IsPathRooted($path)) {
+        Set-Variable $var "$DeploymentTree\$path"
+    }
+}
 
 if ($Export) {
     Export

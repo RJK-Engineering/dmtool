@@ -1,7 +1,8 @@
 $settings = @{
     PackageDir = "P:\packages"
     TemplateDir = "P:\dmtool\Templates"
-    DataSetDir = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Ontwikkel\Assets"
+    DeploymentTree = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData"
+    DataSetDir = "Environments\Ontwikkel\Assets"
     SourceEnvironment = "Ontwikkel"
 }
 
