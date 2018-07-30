@@ -465,21 +465,15 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
     $DeployDataSet = "$DataSetDir\$packageName"
     $ConvertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
 
-    if (Test-Path $DeployDataSet) {
-        if ($Clean) {
+
+    if ($Clean) {
+        if (Test-Path $DeployDataSet) {
             Remove-Item $DeployDataSet -Recurse
             "Deleted $DeployDataSet"
-        } else {
-            "DeployDataSet already exists: $DeployDataSet"
         }
-        exit
-    }
-    if (Test-Path $ConvertedDeployDataSet) {
-        if ($Clean) {
+        if (Test-Path $ConvertedDeployDataSet) {
             Remove-Item $ConvertedDeployDataSet -Recurse
             "Deleted $ConvertedDeployDataSet"
-        } else {
-            "ConvertedDeployDataSet already exists: $ConvertedDeployDataSet"
         }
         exit
     }
