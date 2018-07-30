@@ -166,7 +166,7 @@ param (
 
     # Execute specific -Deploy step. All steps will be executed if no -Step is specified.
     # The step name can be abbreviated, e.g. "I" for "Import", "E" for "Expand", "C" for "Convert", "A" for "Analyze".
-    [string]$Step,
+    [string]$Step
 )
 
 if ($Help) {
