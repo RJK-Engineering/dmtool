@@ -499,11 +499,11 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
         Run "$xmlDir\$ConvertDeployDataSetXML"
     }
 
-    if (! $Password -and ! $Test) {
-        $Password = Read-Host -prompt "Password"
-    }
 
     if (! $Step -or $Step -like "A*") {
+        if (! $Password -and ! $Test) {
+            $Password = Read-Host -prompt "Password"
+        }
         Run "$xmlDir\$AnalyzeDeployDataSetXML" $Password
     }
 
@@ -513,6 +513,9 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
         SetOptionSet $importDeployDataSetPath $optionSetPath
     }
     if (! $Step -or $Step -like "I*") {
+        if (! $Password -and ! $Test) {
+            $Password = Read-Host -prompt "Password"
+        }
         Run $importDeployDataSetPath $Password
     }
 }
