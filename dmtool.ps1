@@ -12,7 +12,7 @@ Actions: -Export, -Build, -Deploy
 Required parameters for -Export:
 - TemplateDir
 - SourceEnvironment
-- ExportManifest
+- Manifest
 - DataSetDir
 Optional:
 - Package (if not provided: create package in current working directory using name of ExportManifest)
@@ -110,7 +110,7 @@ param (
     [string]$PackageDir,
 
     # Export Manifest.
-    [string]$ExportManifest,
+    [string]$Manifest,
 
     # Source environment name.
     [string]$SourceEnvironment,
@@ -237,7 +237,7 @@ function ExportDeployDataSet( [string]$DeployDataSet ) {
     $el = $xml.DeploymentOperation.ExportDeployDataSet
     $el.deleteDestinationFilesOnError = $deleteDestinationFilesOnError
     $el.Environment = $SourceEnvironment
-    $el.ExportManifest = $ExportManifest
+    $el.ExportManifest = $Manifest
     $el.DeployDataSet = $DeployDataSet
 
     WriteXML $xml $ExportDeployDataSetXML
@@ -360,14 +360,15 @@ function CreateOptionSetXML {
 ###########################################################
 
 function Export {
-    if (! (Test-Path $ExportManifest)) {
+    if (! (Test-Path $Manifest)) {
         "Export manifest not found"
         exit
     }
-    $ExportManifestItem = Get-Item $ExportManifest -ErrorAction Stop
+    $ManifestItem = Get-Item $Manifest -ErrorAction Stop
+    $Manifest = $ManifestItem.FullName
 
     if (! $Package) {
-        $Package = Join-Path (Get-Location) "$($ExportManifestItem.BaseName).zip"
+        $Package = Join-Path (Get-Location) "$($ManifestItem.BaseName).zip"
     }
 
     $dir = Split-Path $Package -parent
@@ -381,7 +382,7 @@ function Export {
 
     "Package: $Package"
     "Environment: $SourceEnvironment"
-    "Export manifest: $ExportManifest"
+    "Export manifest: $Manifest"
     $DeployDataSet = "$DataSetDir\$baseName"
     "Deploy data set: $DeployDataSet"
 
