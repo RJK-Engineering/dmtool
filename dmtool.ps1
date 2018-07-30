@@ -461,17 +461,25 @@ function BuildOperationFiles( [System.IO.FileInfo]$pkg ) {
 }
 
 function Deploy( [System.IO.FileInfo]$pkg ) {
-    if ($Clean) {
-        $packageName = $pkg.BaseName
-        $DeployDataSet = "$DataSetDir\$packageName"
-        $ConvertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
-        if (Test-Path $DeployDataSet) {
+    $packageName = $pkg.BaseName
+    $DeployDataSet = "$DataSetDir\$packageName"
+    $ConvertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
+
+    if (Test-Path $DeployDataSet) {
+        if ($Clean) {
             Remove-Item $DeployDataSet -Recurse
             "Deleted $DeployDataSet"
+        } else {
+            "DeployDataSet already exists: $DeployDataSet"
         }
-        if (Test-Path $ConvertedDeployDataSet) {
+        exit
+    }
+    if (Test-Path $ConvertedDeployDataSet) {
+        if ($Clean) {
             Remove-Item $ConvertedDeployDataSet -Recurse
             "Deleted $ConvertedDeployDataSet"
+        } else {
+            "ConvertedDeployDataSet already exists: $ConvertedDeployDataSet"
         }
         exit
     }
