@@ -15,7 +15,7 @@ Required parameters for -Export:
 - Manifest
 - DataSetDir
 Optional:
-- Package (if not provided: create package in current working directory using name of ExportManifest)
+- Package (if not provided: create package in current working directory using name of -Manifest)
 - Password (if not provided: prompt for user input)
 
 Required parameters for -Build:
@@ -32,6 +32,12 @@ Optional:
 Optional parameters for -Deploy:
 - Package or PackageDir (if not provided: take all packages in current working directory sorted by name)
 - Password (if not provided: prompt for user input)
+
+Steps for -Deploy (see -Step):
+- Expand
+- Convert
+- Analyze
+- Import
 
 .EXAMPLE
 dmtool -Build `
@@ -156,7 +162,11 @@ param (
     # Do not make any changes.
     [switch]$Test,
     # Wait for user confirmation before executing Deployment Manager.
-    [switch]$Confirm
+    [switch]$Confirm,
+
+    # Execute specific -Deploy step. All steps will be executed if no -Step is specified.
+    # The step name can be abbreviated, e.g. "I" for "Import", "E" for "Expand", "C" for "Convert", "A" for "Analyze".
+    [string]$Step,
 )
 
 if ($Help) {
@@ -171,7 +181,7 @@ if ($Help) {
 $ExportDeployDataSetXML = "ExportDeployDataSet.xml"
 $CreateDeployPackageXML = "CreateDeployPackage.xml"
 
-# -Build
+# -Build and -Deploy
 $ExpandDeployPackageXML = "ExpandDeployPackage.xml"
 $ConvertDeployDataSetXML = "ConvertDeployDataSet.xml"
 $AnalyzeDeployDataSetXML = "AnalyzeDeployDataSet.xml"
@@ -473,22 +483,30 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
 
     $path = "$xmlDir\$ExpandDeployPackageXML"
     SetDeployPackage $path $pkg.FullName
-    Run $path
+    if (! $Step -or $Step -like "E*") {
+        Run $path
+    }
 
-    Run "$xmlDir\$ConvertDeployDataSetXML"
+    if (! $Step -or $Step -like "C*") {
+        Run "$xmlDir\$ConvertDeployDataSetXML"
+    }
 
     if (! $Password -and ! $Test) {
         $Password = Read-Host -prompt "Password"
     }
 
-    Run "$xmlDir\$AnalyzeDeployDataSetXML" $Password
+    if (! $Step -or $Step -like "A*") {
+        Run "$xmlDir\$AnalyzeDeployDataSetXML" $Password
+    }
 
     $importDeployDataSetPath = "$xmlDir\$ImportDeployDataSetXML"
     $optionSetPath = "$xmlDir\$ImportOptionsXML"
     if (Test-Path $optionSetPath) {
         SetOptionSet $importDeployDataSetPath $optionSetPath
     }
-    Run $importDeployDataSetPath $Password
+    if (! $Step -or $Step -like "I*") {
+        Run $importDeployDataSetPath $Password
+    }
 }
 
 function Run( [string]$opFile, [string]$password ) {
