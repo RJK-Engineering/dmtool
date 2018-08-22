@@ -241,7 +241,7 @@ function WriteXML( [xml]$xml, [string]$file ) {
 ###########################################################
 
 function ExportDeployDataSet( [string]$DeployDataSet ) {
-    $deleteDestinationFilesOnError="false"
+    $deleteDestinationFilesOnError="true"
 
     $xml = GetXML $ExportDeployDataSetXML
     $el = $xml.DeploymentOperation.ExportDeployDataSet
@@ -286,7 +286,7 @@ function CreateExpandDeployPackageXML( [string]$packagePath ) {
 }
 
 function CreateConvertDeployDataSetXML {
-    $deleteDestinationFilesOnError="false"
+    $deleteDestinationFilesOnError="true"
 
     $xml = GetXML $ConvertDeployDataSetXML
     $el = $xml.DeploymentOperation.ConvertDeployDataSet
