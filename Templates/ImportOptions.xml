@@ -4,26 +4,26 @@
     <Environment>environment_name</Environment>
     <DeployDataSet>deploy_dataset_name</DeployDataSet>
 
-    <UpdateOption>UpdateIfNewer|UpdateAlways|UpdateNotAllowed</UpdateOption>
-    <CreateOption>CreateAlways|CreateNotAllowed</CreateOption>
-    <WorkflowConfigurationOption>Overwrite|Merge</WorkflowConfigurationOption>
+    <UpdateOption>UpdateIfNewer</UpdateOption>
+    <CreateOption>CreateAlways</CreateOption>
+    <WorkflowConfigurationOption>Merge</WorkflowConfigurationOption>
 
-    <ImportSecurity value="true|false" />
-    <ImportOwner value="true|false" />
-    <ImportObjectId value="true|false" />
-    <UseOriginalTimestamps value="true|false" />
-    <ImportRetention value="true|false" />
-    <RemovePropertyDefinitions value="true|false" />
-    <TransferWorkflows value="true|false" />
+    <ImportSecurity value="true" />
+    <ImportOwner value="true" />
+    <ImportObjectId value="true" />
+    <UseOriginalTimestamps value="true" />
+    <ImportRetention value="false" />
+    <RemovePropertyDefinitions value="false" />
+    <TransferWorkflows value="false" />
 
-    <AuditOption>AuditOnly|ImportWithAudit|ImportOnly</AuditOption>
+    <AuditOption>ImportOnly</AuditOption>
 
-    <DeleteCreatedFilesOnError value="true|false" />
+    <DeleteCreatedFilesOnError value="true" />
     <ReportFileName>AuditFile</ReportFileName>
 
-    <UpdateLocalizedProperties value="true|false" />
+    <UpdateLocalizedProperties value="false" />
 
-    <StoragePolicy type="DefaultOnClassOnDestination|PropertyOnExportedObject|SpecificOnDestination">
+    <StoragePolicy type="DefaultOnClassOnDestination">
       <ID>storage_policy_GUID</ID>
     </StoragePolicy>
   </ImportOptions>
