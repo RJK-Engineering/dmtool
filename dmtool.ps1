@@ -157,6 +157,8 @@ param (
 
     # Display help.
     [switch]$Help,
+    # Log to "dmtool.log".
+    [switch]$Log,
     # Delete files and directories created during -Export or -Deploy. Use in combination with respective switches.
     [switch]$Clean,
     # Do not make any changes.
@@ -175,6 +177,10 @@ if ($Help) {
 } elseif (! ($Export -or $Build -or $Deploy)) {
     "Use -Export, -Build, -Deploy or -Help."
     exit
+}
+
+if ($Log) {
+    Start-Transcript dmtool.log
 }
 
 # -Export
@@ -596,3 +602,7 @@ if ($Export) {
 }
 
 "Done."
+
+if ($Log) {
+    Stop-Transcript
+}
