@@ -1,6 +1,5 @@
 $settings = @{
-    PackageDir = "P:\packages"
-    TemplateDir = "P:\dmtool\Templates"
+    TemplateDir = "$PSScriptRoot\Templates"
     DeploymentTree = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData"
     DataSetDir = "Environments\kiwi Ontwikkel (Nieuwe)\Assets"
     ConvertedDataSetDir = "Environments\kiwi Test\Assets"
