@@ -159,8 +159,6 @@ param (
     [switch]$Help,
     # Log to "dmtool.log".
     [switch]$Log,
-    # Delete files and directories created during -Export or -Deploy. Use in combination with respective switches.
-    [switch]$Clean,
     # Do not make any changes.
     [switch]$Test,
     # Wait for user confirmation before executing Deployment Manager.
@@ -402,21 +400,6 @@ function Export {
     $DeployDataSet = "$DataSetDir\$baseName"
     "Deploy data set: $DeployDataSet"
 
-    if ($Clean) {
-        if (Test-Path $xmlDir) {
-            Remove-Item $xmlDir -Recurse
-            "Deleted $xmlDir"
-        }
-        if (Test-Path $Package) {
-            Remove-Item $Package
-            "Deleted $Package"
-        }
-        if (Test-Path $DeployDataSet) {
-            Remove-Item $DeployDataSet -Recurse
-            "Deleted $DeployDataSet"
-        }
-        exit
-    }
 
     if (Test-Path $Package) {
         "Package already exists"
@@ -424,6 +407,19 @@ function Export {
     }
 
     if ($Test) { return }
+
+    if (Test-Path $xmlDir) {
+        Remove-Item $xmlDir -Recurse
+        "Deleted $xmlDir"
+    }
+    if (Test-Path $Package) {
+        Remove-Item $Package
+        "Deleted $Package"
+    }
+    if (Test-Path $DeployDataSet) {
+        Remove-Item $DeployDataSet -Recurse
+        "Deleted $DeployDataSet"
+    }
 
     if (-not (Test-Path $xmlDir)) {
         $null = mkdir $xmlDir -ErrorAction Stop
@@ -471,8 +467,7 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
     $DeployDataSet = "$DataSetDir\$packageName"
     $ConvertedDeployDataSet = "$ConvertedDataSetDir\$packageName.converted"
 
-
-    if ($Clean) {
+    if (! $Test) {
         if (Test-Path $DeployDataSet) {
             Remove-Item $DeployDataSet -Recurse
             "Deleted $DeployDataSet"
@@ -481,7 +476,6 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
             Remove-Item $ConvertedDeployDataSet -Recurse
             "Deleted $ConvertedDeployDataSet"
         }
-        exit
     }
 
     $xmlDir = "$($pkg.Directory.FullName)\$($pkg.BaseName)"
