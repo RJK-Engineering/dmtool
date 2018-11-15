@@ -258,8 +258,8 @@ function ExportDeployDataSet( [string]$DeployDataSet ) {
 }
 
 function CreateDeployPackage( [string]$DeployDataSet, [string]$packagePath ) {
-    $includeHalfMaps="false"
-    $overwritePackage="false"
+    $includeHalfMaps="true"
+    $overwritePackage="true"
 
     $xml = GetXML $CreateDeployPackageXML
     $el = $xml.DeploymentOperation.CreateDeployPackage
@@ -275,7 +275,7 @@ function CreateDeployPackage( [string]$DeployDataSet, [string]$packagePath ) {
 
 function CreateExpandDeployPackageXML( [string]$packagePath ) {
     $createEnvironment="false"
-    $halfMapMode="LeaveAsIs"
+    $halfMapMode="Overwrite" # options: Overwrite Merge LeaveAsIs
 
     $xml = GetXML $ExpandDeployPackageXML
     $el = $xml.DeploymentOperation.ExpandDeployPackage
