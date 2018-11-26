@@ -5,4 +5,4 @@ $settings = @{
     SourceEnvironment = "Ontwikkel"
 }
 
-& "$PSScriptRoot\dmtool.ps1" @args @settings
+& "$PSScriptRoot\dmtool.ps1" @args @settings -Log

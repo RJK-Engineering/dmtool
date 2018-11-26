@@ -8,4 +8,4 @@ $settings = @{
     Pair = "Ontw to Prod"
 }
 
-& "$PSScriptRoot\dmtool.ps1" @args @settings
+& "$PSScriptRoot\dmtool.ps1" @args @settings -Log
