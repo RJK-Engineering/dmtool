@@ -143,7 +143,7 @@ param (
 
     # Path to deployment manager executable.
     # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd
-    [string]$DeploymentManager = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd",
+    [string]$DeploymentManager = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager",
     # Path to deployment tree.
     # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData
     [string]$DeploymentTree = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData",
@@ -520,13 +520,14 @@ function Run( [string]$opFile, [string]$password ) {
         Read-Host
     }
     if ($Test) {
-        "& $DeploymentManager -o $opFile -p $password"
+        "& ""$PSScriptRoot\DeploymentManagerCmd"" $DeploymentManager -o $opFile"
     } elseif ($Password) {
-        & $DeploymentManager -o $opFile -p $password
+        & "$PSScriptRoot\DeploymentManagerCmd" $DeploymentManager -o $opFile -p $password
     } else {
-        & $DeploymentManager -o $opFile
+        & "$PSScriptRoot\DeploymentManagerCmd" $DeploymentManager -o $opFile
     }
 }
+\DeploymentManagerCmd.bat c:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager -help
 
 function SetDeployPackage( [string]$ExpandDeployPackagePath, [string]$DeployPackagePath ) {
     "DeployPackage: $DeployPackagePath"
