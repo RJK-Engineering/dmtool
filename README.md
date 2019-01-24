@@ -49,6 +49,9 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
 * Required parameters check
 * Params for now hardcoded per-deployment op. settings
 * -CreateOptionSet
+* doc aanpassen, geen otap, maar aanwijzing juiste s/d env en pair aangeven
+* bij -deploy: aanmaken xmls als niet aanwezig
+* -package bug? maakt dir in dir in datasetdir? (waarsch. expand)
 
 #### optimization: load templates once!
 
