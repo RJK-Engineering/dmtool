@@ -147,7 +147,7 @@ param (
 
     # Path to deployment manager executable.
     # Default value: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd"
-    [string]$DeploymentManager = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager",
+    [string]$DeploymentManager = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd",
     # Path to deployment tree.
     # Default value: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData"
     [string]$DeploymentTree = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData",
@@ -524,11 +524,11 @@ function Run( [string]$opFile, [string]$password ) {
         Read-Host
     }
     if ($Test) {
-        "& ""$PSScriptRoot\DeploymentManagerCmd"" $DeploymentManager -o $opFile"
+        "& $DeploymentManager -o $opFile"
     } elseif ($Password) {
-        & "$PSScriptRoot\DeploymentManagerCmd" $DeploymentManager -o $opFile -p $password
+        & $DeploymentManager -o $opFile -p $password
     } else {
-        & "$PSScriptRoot\DeploymentManagerCmd" $DeploymentManager -o $opFile
+        & $DeploymentManager -o $opFile
     }
 }
 
@@ -564,7 +564,6 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
 ###########################################################
 
 # Default paths
-if ($Build)
 if (-not $DataSetDir) {
     $DataSetDir = "$DeploymentTree\Environments\$SourceEnvironment\Assets"
 }
