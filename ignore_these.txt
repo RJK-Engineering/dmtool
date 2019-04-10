@@ -1,0 +1,6 @@
+ERROR [Thread-6] common.ConsoleThread - 1>System Manager: Starting PCH Listener...
+ERROR [Thread-7] common.ConsoleThread - 2>System Manager: MAX_SOCKETS set to: 32
+ERROR [Thread-6] common.ConsoleThread - 1>System Manager: PCH Listener started.
+ERROR [Thread-6] common.ConsoleThread - 1>System Manager: Registering my port [
+ERROR [Thread-6] common.ConsoleThread - 1>[Perf Log] No interval found. Auditor disabled.
+ERROR [Thread-6] common.ConsoleThread - 1>System Manager: New socket connection detected. acceptSelector.keys().size() =
