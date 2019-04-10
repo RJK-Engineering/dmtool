@@ -163,6 +163,8 @@ param (
     [switch]$Help,
     # Log to "dmtool.log".
     [switch]$Log,
+    # Check configuration.
+    [switch]$Check,
     # Do not make any changes.
     [switch]$Test,
     # Wait for user confirmation before executing Deployment Manager.
@@ -181,7 +183,7 @@ if ($Help) {
     exit
 }
 
-if ($Log) {
+if ($Log -and -not $Check -and -not $Test) {
     Start-Transcript dmtool.log
 }
 
@@ -591,6 +593,8 @@ foreach ($var in @(
     $value = (Get-Variable $var).value
     if ($value) { "{0,-24} {1}" -f "$var`:", $value }
 }
+if ($Check) { exit }
+
 
 if ($Export) {
     Export
@@ -622,6 +626,6 @@ if ($Export) {
 
 "Done."
 
-if ($Log) {
+if ($Log -and -not $Check -and -not $Test) {
     Stop-Transcript
 }
