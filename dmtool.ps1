@@ -15,23 +15,24 @@ Required parameters for -Export:
 - Manifest
 - DataSetDir
 Optional:
-- Package (if not provided: create package in current working directory using name of -Manifest)
-- Password (if not provided: prompt for user input)
+- Package (default: create package in current working directory using name of -Manifest)
+- Password (default: prompt for user input)
 
 Required parameters for -Build:
 - TemplateDir
-- DataSetDir
 - SourceEnvironment
 - DestinationEnvironment
 - Pair
 Optional:
-- Package or PackageDir (if not provided: take all packages in current working directory sorted by name)
-- ConvertedDataSetDir (if not provided: -DataSetDir value)
+- DeploymentTree (default: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData")
+- Package or PackageDir (default: take all packages in current working directory sorted by name)
+- DataSetDir (default: "[DeploymentTree]\Environments\[SourceEnvironment]\Assets")
+- ConvertedDataSetDir (default: "[DeploymentTree]\Environments\[DestinationEnvironment]\Assets")
 - OptionSet
 
 Optional parameters for -Deploy:
-- Package or PackageDir (if not provided: take all packages in current working directory sorted by name)
-- Password (if not provided: prompt for user input)
+- Package or PackageDir (default: take all packages in current working directory sorted by name)
+- Password (default: prompt for user input)
 
 Steps for -Deploy (see -Step):
 - Expand
@@ -123,6 +124,7 @@ param (
     # Destination environment name.
     [string]$DestinationEnvironment,
     # Source-destination pair name.
+    # Default value: "[SourceEnvironment] - [DestinationEnvironment]"
     [string]$Pair,
     # Password. If not provided, prompt for user input.
     [string]$Password,
@@ -130,25 +132,27 @@ param (
     # Path to existing import option XML.
     [string]$OptionSet,
     # DeploymentOption XML version.
-    # Default value: 5.2.1
+    # Default value: "5.2.1"
     [string]$DeploymentOptionsVersion = "5.2.1",
 
     # Path to directory containing deployment operation file templates.
-    [string]$TemplateDir,
+    # Default value: "[PSScriptRoot]\Templates",
+    [string]$TemplateDir = "$PSScriptRoot\Templates",
     # Path to deployment data set directory. Relative paths will be appended to -DeploymentTree.
+    # Default value: "[DeploymentTree]\Environments\[SourceEnvironment]\Assets")
     [string]$DataSetDir,
     # Path to converted deployment data set directory. Relative paths will be appended to -DeploymentTree.
-    # Default value: -DataSetDir parameter value
-    [string]$ConvertedDataSetDir = $($DataSetDir),
+    # Default value: "[DeploymentTree]\Environments\[DestinationEnvironment]\Assets")
+    [string]$ConvertedDataSetDir,
 
     # Path to deployment manager executable.
-    # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd
+    # Default value: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd"
     [string]$DeploymentManager = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager",
     # Path to deployment tree.
-    # Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData
+    # Default value: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData"
     [string]$DeploymentTree = "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData",
     # Deployment tree version.
-    # Default value: 5.2.0
+    # Default value: "5.2.0"
     [string]$DeploymentTreeVersion = "5.2.0",
 
     # Name of file created by AnalyzeDeployDataSet operation.
@@ -527,7 +531,6 @@ function Run( [string]$opFile, [string]$password ) {
         & "$PSScriptRoot\DeploymentManagerCmd" $DeploymentManager -o $opFile
     }
 }
-\DeploymentManagerCmd.bat c:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManager -help
 
 function SetDeployPackage( [string]$ExpandDeployPackagePath, [string]$DeployPackagePath ) {
     "DeployPackage: $DeployPackagePath"
@@ -560,12 +563,34 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
 
 ###########################################################
 
+# Default paths
+if ($Build)
+if (-not $DataSetDir) {
+    $DataSetDir = "$DeploymentTree\Environments\$SourceEnvironment\Assets"
+}
+if (-not $ConvertedDataSetDir) {
+    $ConvertedDataSetDir = "$DeploymentTree\Environments\$DestinationEnvironment\Assets"
+}
+
 # Check for relative paths and make absolute
 foreach ($var in @("DataSetDir", "ConvertedDataSetDir")) {
     $path = (Get-Variable $var).value
     if ($path -and ! [System.IO.Path]::IsPathRooted($path)) {
         Set-Variable $var "$DeploymentTree\$path"
     }
+}
+
+# Default pair name
+if (-not $Pair) {
+    $Pair = "$SourceEnvironment - $DestinationEnvironment"
+}
+
+foreach ($var in @(
+    "Package", "PackageDir", "SourceEnvironment", "DestinationEnvironment", "Pair",
+    "TemplateDir", "DeploymentTree", "DataSetDir", "ConvertedDataSetDir", "OptionSet"
+)) {
+    $value = (Get-Variable $var).value
+    if ($value) { "{0,-24} {1}" -f "$var`:", $value }
 }
 
 if ($Export) {
