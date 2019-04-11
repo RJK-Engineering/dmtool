@@ -42,14 +42,14 @@ Steps for -Deploy (see -Step):
 
 .EXAMPLE
 dmtool -Build `
--Package C:\packages\deployment_20120101-1.zip `
--SourceEnvironment Development `
+-Package                C:\packages\deployment_20120101-1.zip `
+-SourceEnvironment      Development `
 -DestinationEnvironment Test
--Pair "Development - Test" `
--TemplateDir C:\dmtool\Templates `
--DataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets `
--ConvertedDataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets `
--OptionSet MyImportOptions.xml
+-Pair                   "Development - Test" `
+-TemplateDir            C:\dmtool\Templates `
+-DataSetDir             C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets `
+-ConvertedDataSetDir    C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets `
+-OptionSet              MyImportOptions.xml
 
 Build deployment operation files for deployment_20120101-1.zip
 for deployment on Test with Development as source.
@@ -57,20 +57,19 @@ for deployment on Test with Development as source.
 Creates:
 C:\packages\deployment_20120101-1\AnalyzeDeployDataSet.xml
 C:\packages\deployment_20120101-1\ConvertDeployDataSet.xml
-C:\packages\deployment_20120101-1\ImportOptions.xml
 C:\packages\deployment_20120101-1\ExpandDeployPackage.xml
 C:\packages\deployment_20120101-1\ImportDeployDataSet.xml
 
 .EXAMPLE
 dmtool -Build `
--PackageDir C:\packages `
--SourceEnvironment Development `
+-PackageDir             C:\packages `
+-SourceEnvironment      Development `
 -DestinationEnvironment Test
--Pair "Development - Test" `
--TemplateDir C:\dmtool\Templates `
--DeploymentTree C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData `
--DataSetDir Environments\Development\Assets `
--ConvertedDataSetDir Environments\Test\Assets
+-Pair                   "Development - Test" `
+-TemplateDir            C:\dmtool\Templates `
+-DeploymentTree         C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData `
+-DataSetDir             Environments\Development\Assets `
+-ConvertedDataSetDir    Environments\Test\Assets
 
 Build deployment operation files for all packages in C:\packages.
 
@@ -612,7 +611,7 @@ if ($Check) {
     foreach ($pkg in $packages) {
         if ($Build) {
             BuildOperationFiles $pkg
-        } else {
+        } elseif ($Deploy) {
             Deploy $pkg
         }
     }
