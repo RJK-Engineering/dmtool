@@ -162,6 +162,8 @@ param (
     [switch]$Help,
     # Log to "dmtool.log".
     [switch]$Log,
+    # Log filename.
+    [string]$LogFile = "dmtool.log",
     # Check configuration.
     [switch]$Check,
     # Do not make any changes.
@@ -559,10 +561,29 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
     }
 }
 
+function CheckLog( [string]$LogFilePath ) {
+    $hasErrors = 0
+    foreach ($line in Get-Content $LogFilePath) {
+        if ($line -match "ERROR" `
+            -and -not ( `
+                $line -match "System Manager: Starting PCH Listener" `
+            -or $line -match "System Manager: MAX_SOCKETS set to:" `
+            -or $line -match "System Manager: PCH Listener started" `
+            -or $line -match "System Manager: Registering my port" `
+            -or $line -match "No interval found. Auditor disabled." `
+            -or $line -match "System Manager: New socket connection detected. acceptSelector.keys"
+        )) {
+            "$line"
+            $hasErrors = 1
+        }
+    }
+    return $hasErrors
+}
+
 ###########################################################
 
 if ($Log -and -not $Check -and -not $Test) {
-    Start-Transcript dmtool.log
+    Start-Transcript $LogFile
 }
 
 # Default paths
@@ -619,6 +640,11 @@ if ($Check) {
 
 "Done."
 
+CheckLog $LogFile
+
 if ($Log -and -not $Check -and -not $Test) {
     Stop-Transcript
+    if (CheckLog $LogFile) {
+        "`nTHERE WERE ERRORS !!!"
+    }
 }
