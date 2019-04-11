@@ -182,10 +182,6 @@ if ($Help) {
     exit
 }
 
-if ($Log -and -not $Check -and -not $Test) {
-    Start-Transcript dmtool.log
-}
-
 # -Export
 $ExportDeployDataSetXML = "ExportDeployDataSet.xml"
 $CreateDeployPackageXML = "CreateDeployPackage.xml"
@@ -564,6 +560,10 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
 }
 
 ###########################################################
+
+if ($Log -and -not $Check -and -not $Test) {
+    Start-Transcript dmtool.log
+}
 
 # Default paths
 if (-not $DataSetDir) {
