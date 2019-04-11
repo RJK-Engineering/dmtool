@@ -487,6 +487,7 @@ function Deploy( [System.IO.FileInfo]$pkg ) {
     $xmlDir = "$($pkg.Directory.FullName)\$($pkg.BaseName)"
     if (-not (Test-Path $xmlDir)) {
         "Deployment operation file directory does not exist: $xmlDir"
+        BuildOperationFiles $pkg
     }
 
     $path = "$xmlDir\$ExpandDeployPackageXML"
@@ -586,41 +587,34 @@ if (-not $Pair) {
     $Pair = "$SourceEnvironment - $DestinationEnvironment"
 }
 
+# Resolve paths
+if ($TemplateDir) {
+    $TemplateDir = Resolve-Path $TemplateDir -ErrorAction Stop
+}
+if ($OptionSet) {
+    $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
+}
+
 foreach ($var in @(
-    "Package", "PackageDir", "SourceEnvironment", "DestinationEnvironment", "Pair",
-    "TemplateDir", "DeploymentTree", "DataSetDir", "ConvertedDataSetDir", "OptionSet"
+    "Package", "PackageDir", "SourceEnvironment", "DestinationEnvironment", "Pair", "TemplateDir",
+    "DeploymentTree", "DataSetDir", "ConvertedDataSetDir", "OptionSet", "AnalysisReportFileName"
 )) {
     $value = (Get-Variable $var).value
-    if ($value) { "{0,-24} {1}" -f "$var`:", $value }
+    if ($value) { "{0,-23} {1}" -f "$var`:", $value }
 }
-if ($Check) { exit }
 
-
-if ($Export) {
+if ($Check) {
+    exit
+} elseif ($Export) {
     Export
 } else {
     $packages = GetPackages
-    if ($Build) {
-        $TemplateDir = Resolve-Path $TemplateDir -ErrorAction Stop
-        "Template directory: $TemplateDir"
-        "Deployment tree: $DeploymentTree"
-        "Analysis report: $AnalysisReportFileName"
-
-        if ($OptionSet) {
-            $OptionSet = Resolve-Path $OptionSet -ErrorAction Stop
-            "Option set: $OptionSet"
-        }
-        "Source environment: $SourceEnvironment"
-        "Destination environment: $DestinationEnvironment"
-        "Source-destination pair: $Pair`n"
-
-        $action = "BuildOperationFiles"
-    } else {
-        $action = "Deploy"
-    }
-
     foreach ($pkg in $packages) {
-        & $action $pkg
+        if ($Build) {
+            BuildOperationFiles $pkg
+        } else {
+            Deploy $pkg
+        }
     }
 }
 
