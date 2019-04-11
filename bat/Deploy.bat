@@ -6,7 +6,6 @@ IF "%DMTOOL%"=="" GOTO HELP
 IF NOT EXIST "%DMTOOL%" GOTO DNE
 IF "%SOURCE%"=="" GOTO HELP
 IF "%DESTINATION%"=="" GOTO HELP
-IF "%PAIR%"=="" GOTO HELP
 
 set ENVOPTS=-SourceEnvironment '%SOURCE%' -DestinationEnvironment '%DESTINATION%' -Pair '%PAIR%'
 PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& %DMTOOL%\dmtool.ps1 -Deploy %ENVOPTS% -Log %*"
