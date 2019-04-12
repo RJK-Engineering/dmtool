@@ -640,8 +640,6 @@ if ($Check) {
 
 "Done."
 
-CheckLog $LogFile
-
 if ($Log -and -not $Check -and -not $Test) {
     Stop-Transcript
     if (CheckLog $LogFile) {
