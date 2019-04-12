@@ -1,18 +1,15 @@
 
 NAME
-    C:\progz\dmtool\dmtool.ps1
+    P:\workspace\dmtool\dmtool.ps1
 
 SYNOPSIS
     IBM Deployment Manager tool.
 
 
 SYNTAX
-    C:\progz\dmtool\dmtool.ps1 [-Export] [-Build] [-Deploy] [[-Package] <String>] [[-PackageDir] <String>]
-    [[-ExportManifest] <String>] [[-SourceEnvironment] <String>] [[-DestinationEnvironment] <String>] [[-Pair]
-    <String>] [[-Password] <String>] [[-OptionSet] <String>] [[-DeploymentOptionsVersion] <String>] [[-TemplateDir]
-    <String>] [[-DataSetDir] <String>] [[-ConvertedDataSetDir] <String>] [[-DeploymentManager] <String>]
-    [[-DeploymentTree] <String>] [[-DeploymentTreeVersion] <String>] [[-AnalysisReportFileName] <String>] [-Help]
-    [-Clean] [-Test] [-Confirm] [<CommonParameters>]
+    P:\workspace\dmtool\dmtool.ps1 [-Export] [-Build] [-Deploy] [[-Package] <String>] [[-PackageDir] <String>] [[-Manifest] <String>] [[-SourceEnvironment] <String>] [[-DestinationEnvironment] <String>] [[-Pair] <String>] [[-Pass
+    word] <String>] [[-OptionSet] <String>] [[-DeploymentOptionsVersion] <String>] [[-TemplateDir] <String>] [[-DataSetDir] <String>] [[-ConvertedDataSetDir] <String>] [[-DeploymentManager] <String>] [[-DeploymentTree] <String>]
+    [[-DeploymentTreeVersion] <String>] [[-AnalysisReportFileName] <String>] [-Help] [-Log] [[-LogFile] <String>] [-Check] [-Test] [-Confirm] [[-Step] <String>] [<CommonParameters>]
 
 
 DESCRIPTION
@@ -24,26 +21,33 @@ DESCRIPTION
     Required parameters for -Export:
     - TemplateDir
     - SourceEnvironment
-    - ExportManifest
+    - Manifest
     - DataSetDir
     Optional:
-    - Package (if not provided: create package in current working directory using name of ExportManifest)
-    - Password (if not provided: prompt for user input)
+    - Package (default: create package in current working directory using name of -Manifest)
+    - Password (default: prompt for user input)
 
     Required parameters for -Build:
     - TemplateDir
-    - DataSetDir
     - SourceEnvironment
     - DestinationEnvironment
     - Pair
     Optional:
-    - Package or PackageDir (if not provided: take all packages in current working directory sorted by name)
-    - ConvertedDataSetDir (if not provided: -DataSetDir value)
+    - DeploymentTree (default: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData")
+    - Package or PackageDir (default: take all packages in current working directory sorted by name)
+    - DataSetDir (default: "[DeploymentTree]\Environments\[SourceEnvironment]\Assets")
+    - ConvertedDataSetDir (default: "[DeploymentTree]\Environments\[DestinationEnvironment]\Assets")
     - OptionSet
 
     Optional parameters for -Deploy:
-    - Package or PackageDir (if not provided: take all packages in current working directory sorted by name)
-    - Password (if not provided: prompt for user input)
+    - Package or PackageDir (default: take all packages in current working directory sorted by name)
+    - Password (default: prompt for user input)
+
+    Steps for -Deploy (see -Step):
+    - Expand
+    - Convert
+    - Analyze
+    - Import
 
 
 PARAMETERS
@@ -64,7 +68,7 @@ PARAMETERS
         Path to directory containing deployment packages.
         If no -Package or -PackageDir is provided, take all packages in current working directory sorted by name.
 
-    -ExportManifest <String>
+    -Manifest <String>
         Export Manifest.
 
     -SourceEnvironment <String>
@@ -75,6 +79,7 @@ PARAMETERS
 
     -Pair <String>
         Source-destination pair name.
+        Default value: "[SourceEnvironment] - [DestinationEnvironment]"
 
     -Password <String>
         Password. If not provided, prompt for user input.
@@ -84,29 +89,31 @@ PARAMETERS
 
     -DeploymentOptionsVersion <String>
         DeploymentOption XML version.
-        Default value: 5.2.1
+        Default value: "5.2.1"
 
     -TemplateDir <String>
         Path to directory containing deployment operation file templates.
+        Default value: "[PSScriptRoot]\Templates",
 
     -DataSetDir <String>
         Path to deployment data set directory. Relative paths will be appended to -DeploymentTree.
+        Default value: "[DeploymentTree]\Environments\[SourceEnvironment]\Assets")
 
     -ConvertedDataSetDir <String>
         Path to converted deployment data set directory. Relative paths will be appended to -DeploymentTree.
-        Default value: -DataSetDir parameter value
+        Default value: "[DeploymentTree]\Environments\[DestinationEnvironment]\Assets")
 
     -DeploymentManager <String>
         Path to deployment manager executable.
-        Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd
+        Default value: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\DeploymentManagerCmd"
 
     -DeploymentTree <String>
         Path to deployment tree.
-        Default value: C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData
+        Default value: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData"
 
     -DeploymentTreeVersion <String>
         Deployment tree version.
-        Default value: 5.2.0
+        Default value: "5.2.0"
 
     -AnalysisReportFileName <String>
         Name of file created by AnalyzeDeployDataSet operation.
@@ -115,14 +122,24 @@ PARAMETERS
     -Help [<SwitchParameter>]
         Display help.
 
-    -Clean [<SwitchParameter>]
-        Delete files and directories created during -Export or -Deploy. Use in combination with respective switches.
+    -Log [<SwitchParameter>]
+        Log to "dmtool.log".
+
+    -LogFile <String>
+        Log filename.
+
+    -Check [<SwitchParameter>]
+        Check configuration.
 
     -Test [<SwitchParameter>]
         Do not make any changes.
 
     -Confirm [<SwitchParameter>]
         Wait for user confirmation before executing Deployment Manager.
+
+    -Step <String>
+        Execute specific -Deploy step. All steps will be executed if no -Step is specified.
+        The step name can be abbreviated, e.g. "I" for "Import", "E" for "Expand", "C" for "Convert", "A" for "Analyze".
 
     <CommonParameters>
         This cmdlet supports the common parameters: Verbose, Debug,
@@ -132,16 +149,16 @@ PARAMETERS
 
     -------------------------- EXAMPLE 1 --------------------------
 
-    C:\PS>dmtool -Build `
+    PS C:\>dmtool -Build `
 
-    -Package C:\packages\deployment_20120101-1.zip `
-    -SourceEnvironment Development `
+    -Package                C:\packages\deployment_20120101-1.zip `
+    -SourceEnvironment      Development `
     -DestinationEnvironment Test
-    -Pair "Development - Test" `
-    -TemplateDir C:\dmtool\Templates `
-    -DataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets `
-    -ConvertedDataSetDir C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets `
-    -OptionSet MyImportOptions.xml
+    -Pair                   "Development - Test" `
+    -TemplateDir            C:\dmtool\Templates `
+    -DataSetDir             C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Development\Assets `
+    -ConvertedDataSetDir    C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData\Environments\Test\Assets `
+    -OptionSet              MyImportOptions.xml
 
     Build deployment operation files for deployment_20120101-1.zip
     for deployment on Test with Development as source.
@@ -149,7 +166,6 @@ PARAMETERS
     Creates:
     C:\packages\deployment_20120101-1\AnalyzeDeployDataSet.xml
     C:\packages\deployment_20120101-1\ConvertDeployDataSet.xml
-    C:\packages\deployment_20120101-1\ImportOptions.xml
     C:\packages\deployment_20120101-1\ExpandDeployPackage.xml
     C:\packages\deployment_20120101-1\ImportDeployDataSet.xml
 
@@ -158,16 +174,16 @@ PARAMETERS
 
     -------------------------- EXAMPLE 2 --------------------------
 
-    C:\PS>dmtool -Build `
+    PS C:\>dmtool -Build `
 
-    -PackageDir C:\packages `
-    -SourceEnvironment Development `
+    -PackageDir             C:\packages `
+    -SourceEnvironment      Development `
     -DestinationEnvironment Test
-    -Pair "Development - Test" `
-    -TemplateDir C:\dmtool\Templates `
-    -DeploymentTree C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData `
-    -DataSetDir Environments\Development\Assets `
-    -ConvertedDataSetDir Environments\Test\Assets
+    -Pair                   "Development - Test" `
+    -TemplateDir            C:\dmtool\Templates `
+    -DeploymentTree         C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData `
+    -DataSetDir             Environments\Development\Assets `
+    -ConvertedDataSetDir    Environments\Test\Assets
 
     Build deployment operation files for all packages in C:\packages.
 
@@ -176,7 +192,7 @@ PARAMETERS
 
     -------------------------- EXAMPLE 3 --------------------------
 
-    C:\PS>dmtool -Deploy -Package deployment_20120101-1.zip -Password ***
+    PS C:\>dmtool -Deploy -Package deployment_20120101-1.zip -Password ***
 
     Perform deployment operations for deployment_20120101-1.zip.
 
@@ -185,7 +201,7 @@ PARAMETERS
 
     -------------------------- EXAMPLE 4 --------------------------
 
-    C:\PS>dmtool -Deploy -PackageDir C:\packages -Password ***
+    PS C:\>dmtool -Deploy -PackageDir C:\packages -Password ***
 
     Perform deployment operations for all packages in C:\packages.
 
@@ -194,7 +210,7 @@ PARAMETERS
 
     -------------------------- EXAMPLE 5 --------------------------
 
-    C:\PS>dmtool -Deploy
+    PS C:\>dmtool -Deploy
 
     Perform deployment operations for all packages in current working directory and ask for password.
 
@@ -202,10 +218,9 @@ PARAMETERS
 
 
 REMARKS
-    To see the examples, type: "get-help C:\progz\dmtool\dmtool.ps1 -examples".
-    For more information, type: "get-help C:\progz\dmtool\dmtool.ps1 -detailed".
-    For technical information, type: "get-help C:\progz\dmtool\dmtool.ps1 -full".
-    For online help, type: "get-help C:\progz\dmtool\dmtool.ps1 -online"
-
+    To see the examples, type: "get-help P:\workspace\dmtool\dmtool.ps1 -examples".
+    For more information, type: "get-help P:\workspace\dmtool\dmtool.ps1 -detailed".
+    For technical information, type: "get-help P:\workspace\dmtool\dmtool.ps1 -full".
+    For online help, type: "get-help P:\workspace\dmtool\dmtool.ps1 -online"
 
 
