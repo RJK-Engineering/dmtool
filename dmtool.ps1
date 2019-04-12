@@ -561,25 +561,6 @@ function SetOptionSet( [string]$ImportDeployDataSetPath, [string]$OptionSetPath 
     }
 }
 
-function CheckLog( [string]$LogFilePath ) {
-    $hasErrors = 0
-    foreach ($line in Get-Content $LogFilePath) {
-        if ($line -match "ERROR" `
-            -and -not ( `
-                $line -match "System Manager: Starting PCH Listener" `
-            -or $line -match "System Manager: MAX_SOCKETS set to:" `
-            -or $line -match "System Manager: PCH Listener started" `
-            -or $line -match "System Manager: Registering my port" `
-            -or $line -match "No interval found. Auditor disabled." `
-            -or $line -match "System Manager: New socket connection detected. acceptSelector.keys"
-        )) {
-            "$line"
-            $hasErrors = 1
-        }
-    }
-    return $hasErrors
-}
-
 ###########################################################
 
 if ($Log -and -not $Check -and -not $Test) {
@@ -637,12 +618,8 @@ if ($Check) {
         }
     }
 }
-
 "Done."
 
 if ($Log -and -not $Check -and -not $Test) {
     Stop-Transcript
-    if (CheckLog $LogFile) {
-        "`nTHERE WERE ERRORS !!!"
-    }
 }
