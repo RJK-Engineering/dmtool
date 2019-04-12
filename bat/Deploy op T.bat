@@ -5,4 +5,4 @@ set SOURCE=Ontwikkel
 set DESTINATION=Test
 REM set PAIR=Ontw to Test
 
-call %~dp0Deploy.bat %*
+call %DMTOOL%\bat\Deploy.bat %*

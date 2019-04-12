@@ -5,4 +5,4 @@ set SOURCE=Ontwikkel
 set DESTINATION=OokOntwikkel
 set PAIR=OO
 
-call %~dp0Deploy.bat %*
+call %DMTOOL%\bat\Deploy.bat %*
