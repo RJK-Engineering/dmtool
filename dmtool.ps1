@@ -22,8 +22,8 @@ Required parameters for -Build:
 - TemplateDir
 - SourceEnvironment
 - DestinationEnvironment
-- Pair
 Optional:
+- Pair (default: "[SourceEnvironment] - [DestinationEnvironment]")
 - DeploymentTree (default: "C:\Programs\IBM\FileNet\ContentEngine\tools\deploy\P8DeploymentData")
 - Package or PackageDir (default: take all packages in current working directory sorted by name)
 - DataSetDir (default: "[DeploymentTree]\Environments\[SourceEnvironment]\Assets")
