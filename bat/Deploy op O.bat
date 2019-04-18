@@ -1,6 +1,6 @@
 @echo off
 
-if not defined DMTOOL set DMTOOL=D:\dmtool
+if not defined DMTOOL set DMTOOL=%~dp0..
 set SOURCE=Ontwikkel
 set DESTINATION=OokOntwikkel
 set PAIR=OO
