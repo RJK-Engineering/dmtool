@@ -1,6 +1,8 @@
 @echo off
 
+echo.%*|findstr/I/C:"-check" >nul 2>&1 && goto NOPASSWORDCHECK
 echo.%*|findstr/I/C:"-password" >nul 2>&1 || goto NOPASSWORD
+:NOPASSWORDCHECK
 
 IF "%DMTOOL%"=="" GOTO HELP
 IF NOT EXIST "%DMTOOL%" GOTO DNE
